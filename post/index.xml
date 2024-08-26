@@ -1,0 +1,995 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts | Marek Kaluba Academic Page</title>
+    <link>https://www.math.kit.edu/user/kaluba/post/</link>
+      <atom:link href="https://www.math.kit.edu/user/kaluba/post/index.xml" rel="self" type="application/rss+xml" />
+    <description>Posts</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2024 Marek Kaluba</copyright><lastBuildDate>Sun, 07 Jul 2019 11:28:34 +0200</lastBuildDate>
+    <image>
+      <url>https://www.math.kit.edu/user/kaluba/img/m.png</url>
+      <title>Posts</title>
+      <link>https://www.math.kit.edu/user/kaluba/post/</link>
+    </image>
+    
+    <item>
+      <title>SCS on gpu in julia</title>
+      <link>https://www.math.kit.edu/user/kaluba/post/scs-on-gpu-in-julia/</link>
+      <pubDate>Sun, 07 Jul 2019 11:28:34 +0200</pubDate>
+      <guid>https://www.math.kit.edu/user/kaluba/post/scs-on-gpu-in-julia/</guid>
+      <description>&lt;p&gt;
+&lt;a href=&#34;https://github.com/cvxgrp/scs/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Splitting Conic Solver&lt;/a&gt; or &lt;code&gt;scs&lt;/code&gt; is
+a well established solver for conic optimization problems.
+It has bindings to &lt;code&gt;julia&lt;/code&gt; via 
+&lt;a href=&#34;https://github.com/JuliaOpt/SCS.jl&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;SCS.jl&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Part of each iteration of the solver is solving a system of linear equations.
+Scs provides some freedom in this respect. i.e. one can choose one of the following provided methods:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Direct Solver using &lt;code&gt;qdldl&lt;/code&gt; and &lt;code&gt;amd&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Indirect Solver using conjugated gradient&lt;/li&gt;
+&lt;li&gt;Indirect Solver on gpu using sparse conjugated gradient through CUDA&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;(You may also implement your own solver.)&lt;/p&gt;
+&lt;p&gt;On the julia side only the &lt;em&gt;Direct&lt;/em&gt; and &lt;em&gt;Indirect&lt;/em&gt; solvers are available
+(since 
+&lt;a href=&#34;https://github.com/JuliaOpt/SCS.jl/pull/95&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;#95&lt;/a&gt;).
+The main problem with providing the gpu solver is that &lt;code&gt;cusparse&lt;/code&gt; works only with &lt;code&gt;int&lt;/code&gt;s,
+so &lt;code&gt;scs&lt;/code&gt; has to be compiled with
+
+&lt;a href=&#34;https://github.com/bodono/scs-python/blob/7bdee2dc3a578594bc843a884edcdb9b9f8c9f2c/setup.py#L47&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;code&gt;DLONG=0&lt;/code&gt; option&lt;/a&gt;,
+while other software (including &lt;code&gt;julia&lt;/code&gt;) requires
+
+&lt;a href=&#34;https://github.com/bodono/scs-python/blob/7bdee2dc3a578594bc843a884edcdb9b9f8c9f2c/setup.py#L154&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;code&gt;DLONG=1&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;It means, that when user asks for the gpu solver we need not only cast our data appropriately, but also alternate the objects we&amp;rsquo;re passing to e.g. &lt;code&gt;scs_solve&lt;/code&gt;, by changing the storage type, struct alignment etc. In &lt;code&gt;julia&lt;/code&gt; we have a simple method for making this happen: parametrize the mirrored &lt;code&gt;c&lt;/code&gt;-structs by the type of integer. Long story short: by checking out 
+&lt;a href=&#34;https://github.com/kalmarek/SCS.jl/tree/enh/gpu_solver&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;enh/gpu_solver branch&lt;/a&gt; you can enjoy the gpu solver even from julia.&lt;/p&gt;
+&lt;p&gt;Well not quite, You need to compile &lt;code&gt;scs&lt;/code&gt; first. &lt;del&gt;We start with a tiny patch to &lt;code&gt;scs.mk&lt;/code&gt;&lt;/del&gt; (a patch for using &lt;code&gt;CUDA_PATH&lt;/code&gt; has been already merged, no need for it anymore).&lt;/p&gt;
+&lt;p&gt;Then define env variables:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;CUDA_PATH&lt;/code&gt; pointing to cuda installation&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;JULIA_LIBRARY_PATH&lt;/code&gt; pointing to &lt;code&gt;./lib/julia&lt;/code&gt; inside your julia installation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Finally compile &lt;code&gt;scs&lt;/code&gt; with&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;make purge
+
+make -j4 CFLAGS=&amp;quot;-march=native&amp;quot; DLONG=1 USE_OPENMP=1 BLASLDFLAGS=&amp;quot;-L$JULIA_LIBRARY_PATH -lopenblas64_&amp;quot; BLAS64=1 BLASSUFFIX=_64_
+
+LD_LIBRARY_PATH=$JULIA_LIBRARY_PATH ./out/demo_socp_direct 1000 0.5 0.5 1
+LD_LIBRARY_PATH=$JULIA_LIBRARY_PATH ./out/demo_socp_indirect 1000 0.5 0.5 1
+
+make clean
+# note DLONG=0 below!
+make -j4 CFLAGS=&amp;quot;-march=native&amp;quot; DLONG=0 USE_OPENMP=1 BLASLDFLAGS=&amp;quot;-L$JULIA_LIBRARY_PATH -lopenblas64_&amp;quot; BLAS64=1 BLASSUFFIX=_64_ gpu
+
+LD_LIBRARY_PATH=$JULIA_LIBRARY_PATH ./out/demo_socp_gpu 1000 0.5 0.5 1
+make clean
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    We &lt;code&gt;make purge&lt;/code&gt; at the beginning and &lt;code&gt;make clean&lt;/code&gt; in the middle to get rid of
+partial products (as these were produced with &lt;code&gt;DLONG=1&lt;/code&gt;).
+In addition we also run demos to make sure &lt;code&gt;scs&lt;/code&gt; produced working libraries.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;At this moment there should be three libraries in &lt;code&gt;./out&lt;/code&gt;: &lt;code&gt;libscsdir&lt;/code&gt;, &lt;code&gt;libscsindir&lt;/code&gt; and &lt;code&gt;libscsgpuindir&lt;/code&gt;. (The first two are compiled with &lt;code&gt;scs_int = long&lt;/code&gt; implied by &lt;code&gt;DLONG=1&lt;/code&gt;, the last with &lt;code&gt;scs_int = int&lt;/code&gt;. Assuming you&amp;rsquo;re on a sane platform.) Finally we need to set &lt;code&gt;ENV[&amp;quot;JULIA_SCS_LIBRARY_PATH&amp;quot;]=/path/to/source/of/scs/out&lt;/code&gt; and issue &lt;code&gt;Pkg.build(&amp;quot;SCS&amp;quot;)&lt;/code&gt; (don&amp;rsquo;t forget to &lt;code&gt;dev SCS&lt;/code&gt; first).&lt;/p&gt;
+&lt;p&gt;If You want to be sure, check &lt;code&gt;SCS.available_solvers&lt;/code&gt; and observe the output of &lt;code&gt;Pkg.test(&amp;quot;SCS&amp;quot;)&lt;/code&gt;!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Replication Details for 1812.03456</title>
+      <link>https://www.math.kit.edu/user/kaluba/post/1812.03456/</link>
+      <pubDate>Thu, 17 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>https://www.math.kit.edu/user/kaluba/post/1812.03456/</guid>
+      <description>&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    &lt;p&gt;Below are replication details for computations with special linear groups as described in Section 5.1 of paper &lt;a href=&#34;https://www.math.kit.edu/user/kaluba/publication/2017-autf5-has-t/&#34;&gt;On property (T) for $\operatorname{Aut}(F_n)$ and $\operatorname{SL}_n$&lt;/a&gt;.
+The content of the accompanying &lt;a href=&#34;https://nbviewer.jupyter.org/gist/kalmarek/03510181bc1e7c98615e86e1ec580b2a&#34;&gt;jupyter notebook&lt;/a&gt; is reproduced below.&lt;/p&gt;
+&lt;p&gt;For exact details of computations for $36(\operatorname{Adj}_5 + 2 \operatorname{Op}_5) - 50\Delta_5 \in I\operatorname{SAut}(F_5)$ see the document deposited with the &lt;a href=&#34;https://zenodo.org/record/1958996&#34;&gt;dataset in zenodo data repository&lt;/a&gt;.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;h2&gt;Table of Contents&lt;/h2&gt;
+&lt;nav id=&#34;TableOfContents&#34;&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&#34;#generating-set&#34;&gt;Generating set&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&#34;#group-ring-and-laplacians&#34;&gt;Group Ring and Laplacians&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&#34;#orbit-decomposition&#34;&gt;Orbit Decomposition&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&#34;#elements-adj-and-op&#34;&gt;Elements Adj and Op&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&#34;#optimization-problem&#34;&gt;Optimization Problem&lt;/a&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href=&#34;#solving-the-problem&#34;&gt;Solving the problem&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/li&gt;
+    &lt;li&gt;&lt;a href=&#34;#checking-the-solution&#34;&gt;Checking the solution&lt;/a&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href=&#34;#checking-in-interval-arithmetic&#34;&gt;Checking in interval arithmetic&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;
+&lt;h1 id=&#34;installation&#34;&gt;Installation&lt;/h1&gt;
+&lt;p&gt;The following instructions were prepared using &lt;code&gt;julia-1.1.1&lt;/code&gt;.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Before exploring the notebook you need to clone the main repository:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt; git clone https://github.com/kalmarek/1812.03456.git
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This notebook should be located in &lt;code&gt;1812.03456/notebooks&lt;/code&gt; directory.&lt;/p&gt;
+&lt;p&gt;In the main directory (&lt;code&gt;1812.03456&lt;/code&gt;) you should run the following code in &lt;code&gt;julia&lt;/code&gt;s &lt;code&gt;REPL&lt;/code&gt; console to instantiate the environment for computations:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using Pkg
+Pkg.activate(&amp;quot;.&amp;quot;)
+Pkg.instantiate()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;(this needs to be done once per installation).&lt;/p&gt;
+&lt;p&gt;Instantiation should install (among others): the 
+&lt;a href=&#34;https://github.com/cvxgrp/scs&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;code&gt;SCS&lt;/code&gt; solver&lt;/a&gt;, 
+&lt;a href=&#34;https://github.com/JuliaOpt/JuMP.jl&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;code&gt;JuMP&lt;/code&gt; package&lt;/a&gt; for mathematical programming and &lt;code&gt;IntervalArithmetic.jl&lt;/code&gt; package from 
+&lt;a href=&#34;https://github.com/JuliaIntervals/ValidatedNumerics.jl&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;code&gt;ValidatedNumerics.jl&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The environment uses 
+&lt;a href=&#34;https://github.com/kalmarek/Groups.jl&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;code&gt;Groups.jl&lt;/code&gt;&lt;/a&gt;, 
+&lt;a href=&#34;https://github.com/kalmarek/GroupRings.jl&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;code&gt;GroupRings.jl&lt;/code&gt;&lt;/a&gt; (which are built on the framework of  
+&lt;a href=&#34;https://github.com/Nemocas/AbstractAlgebra.jl&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;code&gt;AbstractAlgebra.jl&lt;/code&gt;&lt;/a&gt;) and 
+&lt;a href=&#34;https://github.com/kalmarek/PropertyT.jl&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;code&gt;PropertyT.jl&lt;/code&gt;&lt;/a&gt; packages.&lt;/p&gt;
+&lt;h1 id=&#34;the-computation&#34;&gt;The computation&lt;/h1&gt;
+&lt;p&gt;The following programme certifies that
+$$\operatorname{Adj}_4 + \operatorname{Op}_4 - 0.82\Delta_4 =\Sigma_i \xi_i^*\xi_i \in \Sigma^2_2\mathbb{R}\operatorname{SL}(4,\mathbb{Z}).$$&lt;/p&gt;
+&lt;p&gt;With small changes (which we will indicate) it also certifies that
+$$\operatorname{Adj}_3 - 0.157999\Delta_3 \in \Sigma^2_2\mathbb{R}\operatorname{SL}(3,\mathbb{Z})$$
+and that
+$$\operatorname{Adj}_5 +1.5 \mathrm{Op}_5 - 1.5\Delta_5 \in \Sigma^2_2\mathbb{R}\operatorname{SL}(5,\mathbb{Z}).$$&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using Pkg
+Pkg.activate(&amp;quot;..&amp;quot;)
+using Dates
+now()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;2019-07-05T22:42:41.473
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using LinearAlgebra
+using AbstractAlgebra
+using Groups
+using GroupRings
+using PropertyT
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;So far we only made the needed packages available in the notebook.
+In the next cell we define &lt;code&gt;G&lt;/code&gt; to be the set of all $4\times 4$ matrices over $\mathbb Z$.
+(For the second computation, set &lt;code&gt;N=3&lt;/code&gt; below; for the third, set &lt;code&gt;N=5&lt;/code&gt;)&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;N = 4
+G = MatrixAlgebra(zz, N)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;Matrix Algebra of degree 4 over Integers
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;generating-set&#34;&gt;Generating set&lt;/h2&gt;
+&lt;p&gt;Now we create the elementary matrices $E_{i,j}$. The set of all such matrices and their inverses is denoted by &lt;code&gt;S&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;S = PropertyT.generating_set(G)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;24-element Array{AbstractAlgebra.Generic.MatAlgElem{Int64},1}:
+ [1 1 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] 
+ [1 0 1 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] 
+ [1 0 0 1]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] 
+ [1 0 0 0]
+[1 1 0 0]
+[0 0 1 0]
+[0 0 0 1] 
+ [1 0 0 0]
+[0 1 1 0]
+[0 0 1 0]
+[0 0 0 1] 
+ [1 0 0 0]
+[0 1 0 1]
+[0 0 1 0]
+[0 0 0 1] 
+ [1 0 0 0]
+[0 1 0 0]
+[1 0 1 0]
+[0 0 0 1] 
+ [1 0 0 0]
+[0 1 0 0]
+[0 1 1 0]
+[0 0 0 1] 
+ [1 0 0 0]
+[0 1 0 0]
+[0 0 1 1]
+[0 0 0 1] 
+ [1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[1 0 0 1] 
+ [1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 1 0 1] 
+ [1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 1 1] 
+ [1 -1 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1]
+ [1 0 -1 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1]
+ [1 0 0 -1]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1]
+ [1 0 0 0]
+[-1 1 0 0]
+[0 0 1 0]
+[0 0 0 1]
+ [1 0 0 0]
+[0 1 -1 0]
+[0 0 1 0]
+[0 0 0 1]
+ [1 0 0 0]
+[0 1 0 -1]
+[0 0 1 0]
+[0 0 0 1]
+ [1 0 0 0]
+[0 1 0 0]
+[-1 0 1 0]
+[0 0 0 1]
+ [1 0 0 0]
+[0 1 0 0]
+[0 -1 1 0]
+[0 0 0 1]
+ [1 0 0 0]
+[0 1 0 0]
+[0 0 1 -1]
+[0 0 0 1]
+ [1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[-1 0 0 1]
+ [1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 -1 0 1]
+ [1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 -1 1]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;group-ring-and-laplacians&#34;&gt;Group Ring and Laplacians&lt;/h2&gt;
+&lt;p&gt;Now we will generate the ball &lt;code&gt;E_R&lt;/code&gt; of radius $R=4$ in $\operatorname{SL}(N,\mathbb{Z})$ and use this as a (partial) basis in a group ring (denoted by &lt;code&gt;RG&lt;/code&gt; below). Such group ring also needs a multiplication table (&lt;code&gt;pm&lt;/code&gt;, which is actually a &lt;em&gt;division table&lt;/em&gt;) which is created as follows: when $x,y$ reside at positions &lt;code&gt;i&lt;/code&gt;-th and &lt;code&gt;j&lt;/code&gt;-th in &lt;code&gt;E_R&lt;/code&gt;, then &lt;code&gt;pm[i,j] = k&lt;/code&gt;, where &lt;code&gt;k&lt;/code&gt; is the position of $x^{-1}y$ in &lt;code&gt;E_R&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;halfradius = 2
+E_R, sizes = Groups.generate_balls(S, radius=2*halfradius);
+E_rdict = GroupRings.reverse_dict(E_R)
+pm = GroupRings.create_pm(E_R, E_rdict, sizes[halfradius]; twisted=true);
+RG = GroupRing(G, E_R, E_rdict, pm)
+@show sizes;
+Δ = length(S)*one(RG) - sum(RG(s) for s in S)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;sizes = [25, 433, 6149, 75197]
+
+
+
+
+
+24[1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 1 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 1 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 1]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[1 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 1 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 1]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[1 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 1 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 0 1 1]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[1 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 1 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 1 1] - 1[1 -1 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 -1 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 -1]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[-1 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 -1 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 -1]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[-1 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 -1 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 0 1 -1]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[-1 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 -1 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 -1 1]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;orbit-decomposition&#34;&gt;Orbit Decomposition&lt;/h2&gt;
+&lt;p&gt;Now something happens: in the next cell we split the subspace of $\mathbb{R} \operatorname{SL}(N, \mathbb{Z})$ supported on &lt;code&gt;E_R&lt;/code&gt; into irreducible representations of the wreath product $\mathbb Z / 2 \mathbb Z \wr \operatorname{Sym}_N$. The action of wreath product on the elements of the matrix space is by conjugation, i.e. permutation of rows and columns.
+We also compute projections on the invariant subspaces to later speed up the optimisation step.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;od = PropertyT.OrbitData(RG, WreathProduct(PermGroup(2), PermGroup(N)))
+orbit_data = PropertyT.decimate(od);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;┌ Info: Decomposing basis of RG into orbits of
+│   autS = Wreath Product of Permutation group over 2 elements by Permutation group over 4 elements
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:15
+
+
+  0.381708 seconds (1.18 M allocations: 82.083 MiB, 6.45% gc time)
+
+
+┌ Info: The action has 558 orbits
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:18
+┌ Info: Finding projections in the Group Ring of
+│   autS = Wreath Product of Permutation group over 2 elements by Permutation group over 4 elements
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:20
+
+
+  6.154452 seconds (9.74 M allocations: 487.622 MiB, 4.69% gc time)
+
+
+┌ Info: Finding AutS-action matrix representation
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:23
+
+
+  0.294136 seconds (963.71 k allocations: 64.184 MiB, 6.98% gc time)
+  0.440521 seconds (717.96 k allocations: 49.094 MiB, 4.87% gc time)
+
+
+┌ Info: Computing the projection matrices Uπs
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:27
+
+
+  1.778654 seconds (1.75 M allocations: 841.323 MiB, 5.12% gc time)
+
+
+┌ Info: 
+│ multiplicities  =   3  13  19  12  10   0   0   0   9  11  13  15   0   0   0   1   1   1   2   1
+│     dimensions  =   1   3   3   2   1   4   8   4   6   6   6   6   4   8   4   1   3   3   2   1
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:37
+┌ Info: Sparsifying (433, 3)-matrix... 
+│  0.7013086989992302   → 0.18475750577367206 ), (240 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 13)-matrix... 
+│  0.5821637946349263   → 0.3084029134837449  ), (1736 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 19)-matrix... 
+│  0.6031360155585268   → 0.4934970220007293  ), (4060 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 12)-matrix... 
+│  0.6123941493456505   → 0.2817551963048499  ), (1464 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 10)-matrix... 
+│  0.48221709006928404  → 0.1                 ), (433 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 9)-matrix... 
+│  0.24044136515268155  → 0.03695150115473441 ), (144 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 11)-matrix... 
+│  0.19462523619567498  → 0.033592273777031285), (160 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 13)-matrix... 
+│  0.16237342334340024  → 0.02842423165748801 ), (160 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 15)-matrix... 
+│  0.16874518860662047  → 0.027097767513471902), (176 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 1)-matrix... 
+│  0.11085450346420324  → 0.11085450346420324 ), (48 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 1)-matrix... 
+│  0.07390300230946882  → 0.07390300230946882 ), (32 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 1)-matrix... 
+│  0.07390300230946882  → 0.07390300230946882 ), (32 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 2)-matrix... 
+│  0.11200923787528869  → 0.09237875288683603 ), (80 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 1)-matrix... 
+│  0.11085450346420324  → 0.11085450346420324 ), (48 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;elements-adj-and-op&#34;&gt;Elements Adj and Op&lt;/h2&gt;
+&lt;p&gt;Now we  define the elements $\operatorname{Adj}_N$ and $\operatorname{Op}_N$. The functions &lt;code&gt;Sq&lt;/code&gt;, &lt;code&gt;Adj&lt;/code&gt;, &lt;code&gt;Op&lt;/code&gt; returning the appropriate elements are defined in the &lt;code&gt;src/sqadjop.jl&lt;/code&gt; source file.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;@time AdjN = PropertyT.Adj(RG, N)
+@time OpN = PropertyT.Op(RG, N);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;  1.719218 seconds (2.70 M allocations: 134.807 MiB, 3.24% gc time)
+  0.284995 seconds (367.56 k allocations: 18.374 MiB, 2.55% gc time)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally we compute the element &lt;code&gt;elt&lt;/code&gt; of our interest:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;if &lt;code&gt;N=3&lt;/code&gt;: $\operatorname{elt} = \operatorname{Adj}_3$,&lt;/li&gt;
+&lt;li&gt;if &lt;code&gt;N=4&lt;/code&gt;: $\operatorname{elt} = \operatorname{Adj}_4 + \operatorname{Op}_4$,&lt;/li&gt;
+&lt;li&gt;if &lt;code&gt;N=5&lt;/code&gt;: $\operatorname{elt} = \operatorname{Adj}_5 + 1.5\operatorname{Op}_5$.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;if N == 3
+    k = 0
+elseif N == 4
+    k = 1
+elseif N == 5
+    k = 1.5
+end
+elt = AdjN + k*OpN;
+elt.coeffs
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;    75197-element SparseArrays.SparseVector{Int64,Int64} with 361 stored entries:
+      [1    ]  =  480
+      [2    ]  =  -40
+      [3    ]  =  -40
+      [4    ]  =  -40
+      [5    ]  =  -40
+      [6    ]  =  -40
+      [7    ]  =  -40
+      [8    ]  =  -40
+      [9    ]  =  -40
+      [10   ]  =  -40
+               ⋮
+      [418  ]  =  1
+      [420  ]  =  1
+      [422  ]  =  2
+      [423  ]  =  1
+      [424  ]  =  1
+      [425  ]  =  1
+      [426  ]  =  1
+      [428  ]  =  1
+      [429  ]  =  1
+      [430  ]  =  1
+      [431  ]  =  1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;optimization-problem&#34;&gt;Optimization Problem&lt;/h2&gt;
+&lt;p&gt;We are ready to define the optimisation problem. Function&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;PropertyT.SOS_problem(x, Δ, orbit_data; upper_bound=UB)&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;defines the optimisation problem equivalent to the one of the form
+$$\begin{aligned}
+\text{ maximize : } \quad &amp;amp; \lambda\
+\text{under constraints : }\quad &amp;amp; 0 \leqslant \lambda \leqslant \operatorname{UB},\
+&amp;amp; x - \lambda \Delta = \sum \xi_i^* \xi_i,\
+\end{aligned}$$&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;# @time SDP_problem, varλ, varP = PropertyT.SOS_problem(elt, Δ, orbit_data)
+if N == 3
+    UB = 0.158
+elseif N == 4
+    UB = 0.82005
+elseif N == 5
+    UB = 1.5005
+end
+SDP_problem, varP = PropertyT.SOS_problem(elt, Δ, orbit_data; upper_bound=UB)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;┌ Info: Adding 558 constraints...
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/sos_sdps.jl:92
+
+
+  1.916622 seconds (3.18 M allocations: 408.777 MiB, 12.54% gc time)
+
+
+
+
+
+(A JuMP Model
+Maximization problem with:
+Variables: 1388
+Objective function type: JuMP.VariableRef
+`JuMP.VariableRef`-in-`MathOptInterface.LessThan{Float64}`: 1 constraint
+`JuMP.GenericAffExpr{Float64,JuMP.VariableRef}`-in-`MathOptInterface.EqualTo{Float64}`: 558 constraints
+`Array{JuMP.VariableRef,1}`-in-`MathOptInterface.PositiveSemidefiniteConeSquare`: 14 constraints
+Model mode: AUTOMATIC
+CachingOptimizer state: NO_OPTIMIZER
+Solver name: No optimizer attached.
+Names registered in the model: λ, Array{JuMP.VariableRef,2}[[noname noname noname; noname noname noname; noname noname noname], [noname noname … noname noname; noname noname … noname noname; … ; noname noname … noname noname; noname noname … noname noname], [noname noname … noname noname; noname noname … noname noname; … ; noname noname … noname noname; noname noname … noname noname], [noname noname … noname noname; noname noname … noname noname; … ; noname noname … noname noname; noname noname … noname noname], [noname noname … noname noname; noname noname … noname noname; … ; noname noname … noname noname; noname noname … noname noname], [noname noname … noname noname; noname noname … noname noname; … ; noname noname … noname noname; noname noname … noname noname], [noname noname … noname noname; noname noname … noname noname; … ; noname noname … noname noname; noname noname … noname noname], [noname noname … noname noname; noname noname … noname noname; … ; noname noname … noname noname; noname noname … noname noname], [noname noname … noname noname; noname noname … noname noname; … ; noname noname … noname noname; noname noname … noname noname], [noname], [noname], [noname], [noname noname; noname noname], [noname]])
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using JuMP
+using SCS
+λ = Ps = warm = nothing
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;solving-the-problem&#34;&gt;Solving the problem&lt;/h3&gt;
+&lt;p&gt;Depending on the actual problem one may need to tweak the parameters given to the solver:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;eps&lt;/code&gt; sets the requested accuracy&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;max_iters&lt;/code&gt; sets the number of iterations to run before solver gives up&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;alpha&lt;/code&gt; is a parameter ($\alpha \in (0,2)$) which determines the rate of convergence at the cost of the accuracy&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;acceleration_lookback&lt;/code&gt;: if you experience numerical instability in scs log should be changed to &lt;code&gt;1&lt;/code&gt; (at the cost of rate of convergence).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The parameters below should be enough to obtain a decent solution for $\operatorname{SL}(4, \mathbb{Z}), \operatorname{SL}(5, \mathbb{Z})$.&lt;br&gt;
+For $\operatorname{SL}(3, \mathbb{Z})$ approximately &lt;code&gt;1_000_000&lt;/code&gt; of iterations is required; in this case by changing &lt;code&gt;UB&lt;/code&gt; to $0.15$ (above) a much faster convergence can be observed.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;with_SCS = with_optimizer(SCS.Optimizer, 
+    linear_solver=SCS.Direct, 
+    eps=3e-13,
+    max_iters=10000,
+    alpha=1.5,
+    acceleration_lookback=10,
+    warm_start=true)
+
+status, warm = PropertyT.solve(SDP_problem, with_SCS, warm);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;----------------------------------------------------------------------------
+	SCS v2.0.2 - Splitting Conic Solver
+	(c) Brendan O&#39;Donoghue, Stanford University, 2012-2017
+----------------------------------------------------------------------------
+Lin-sys: sparse-direct, nnz in A = 130382
+eps = 3.00e-13, alpha = 1.50, max_iters = 10000, normalize = 1, scale = 1.00
+acceleration_lookback = 10, rho_x = 1.00e-03
+Variables n = 1388, constraints m = 1946
+Cones:	primal zero / dual free vars: 1196
+	linear vars: 1
+	sd vars: 749, sd blks: 14
+Setup time: 8.46e-02s
+SCS using variable warm-starting
+----------------------------------------------------------------------------
+ Iter | pri res | dua res | rel gap | pri obj | dua obj | kap/tau | time (s)
+----------------------------------------------------------------------------
+     0| 1.02e+00  1.23e+00  9.75e-01 -3.44e+01  4.76e+00  0.00e+00  2.96e-03 
+   100| 1.68e-04  1.10e-03  1.18e-03 -8.19e-01 -8.16e-01  2.95e-16  1.65e-01 
+   200| 1.86e-04  4.32e-04  1.38e-04 -8.19e-01 -8.20e-01  5.89e-16  3.40e-01 
+   300| 6.04e-05  5.47e-04  1.30e-04 -8.19e-01 -8.19e-01  2.39e-17  5.22e-01 
+   400| 1.35e-04  4.46e-04  2.68e-04 -8.19e-01 -8.20e-01  2.06e-15  6.93e-01 
+   500| 1.35e-04  4.21e-04  3.66e-04 -8.19e-01 -8.20e-01  2.36e-15  8.59e-01 
+   600| 4.90e-05  2.34e-04  2.32e-04 -8.20e-01 -8.19e-01  3.42e-16  1.02e+00 
+   700| 2.12e-05  1.74e-04  1.49e-04 -8.20e-01 -8.19e-01  1.51e-15  1.19e+00 
+   800| 6.12e-05  2.23e-04  2.15e-04 -8.20e-01 -8.19e-01  4.95e-16  1.37e+00 
+   900| 3.99e-05  1.79e-04  3.29e-05 -8.20e-01 -8.20e-01  5.59e-16  1.54e+00 
+  1000| 1.30e-05  1.93e-04  1.04e-04 -8.20e-01 -8.20e-01  1.37e-15  1.72e+00 
+  1100| 2.31e-05  2.01e-04  9.26e-05 -8.20e-01 -8.19e-01  2.58e-16  1.89e+00 
+  1200| 2.15e-05  1.68e-04  2.12e-04 -8.20e-01 -8.19e-01  1.20e-15  2.07e+00 
+  1300| 2.32e-05  1.61e-04  1.64e-04 -8.20e-01 -8.19e-01  5.90e-17  2.24e+00 
+  1400| 1.19e-05  1.13e-04  1.75e-04 -8.20e-01 -8.19e-01  5.17e-16  2.42e+00 
+  1500| 8.01e-06  1.33e-04  8.49e-05 -8.20e-01 -8.20e-01  3.33e-16  2.59e+00 
+  1600| 3.49e-05  1.50e-04  1.04e-04 -8.20e-01 -8.19e-01  3.73e-16  2.76e+00 
+  1700| 2.28e-05  8.89e-05  5.56e-05 -8.20e-01 -8.20e-01  2.86e-16  2.92e+00 
+  1800| 1.54e-05  9.31e-05  1.06e-04 -8.20e-01 -8.20e-01  4.60e-16  3.09e+00 
+  1900| 9.36e-06  1.25e-04  4.95e-06 -8.20e-01 -8.20e-01  3.36e-15  3.26e+00 
+  2000| 3.71e-05  8.99e-05  2.00e-05 -8.20e-01 -8.20e-01  3.53e-16  3.46e+00 
+  2100| 7.38e-06  7.97e-05  5.16e-05 -8.20e-01 -8.20e-01  1.92e-15  3.64e+00 
+  2200| 1.08e-05  7.21e-05  3.00e-05 -8.20e-01 -8.20e-01  8.14e-16  3.81e+00 
+  2300| 6.20e-06  9.69e-05  5.00e-05 -8.20e-01 -8.20e-01  1.36e-15  3.98e+00 
+  2400| 8.47e-06  8.09e-05  6.05e-05 -8.20e-01 -8.20e-01  2.48e-15  4.15e+00 
+  2500| 2.39e-05  8.09e-05  3.22e-05 -8.20e-01 -8.20e-01  3.40e-15  4.33e+00 
+  2600| 1.56e-05  5.56e-05  1.86e-05 -8.20e-01 -8.20e-01  1.13e-16  4.50e+00 
+  2700| 6.45e-06  6.44e-05  7.46e-07 -8.20e-01 -8.20e-01  1.15e-16  4.67e+00 
+  2800| 2.76e-06  4.58e-05  5.44e-05 -8.20e-01 -8.20e-01  3.67e-15  4.84e+00 
+  2900| 3.68e-06  5.38e-05  3.21e-05 -8.20e-01 -8.20e-01  1.04e-15  5.02e+00 
+  3000| 6.13e-06  5.96e-05  5.55e-05 -8.20e-01 -8.20e-01  2.67e-16  5.19e+00 
+  3100| 1.15e-05  4.97e-05  2.32e-06 -8.20e-01 -8.20e-01  4.40e-16  5.37e+00 
+  3200| 1.28e-05  3.79e-05  4.61e-05 -8.20e-01 -8.20e-01  2.80e-15  5.54e+00 
+  3300| 1.01e-05  8.71e-05  3.11e-05 -8.20e-01 -8.20e-01  1.90e-15  5.73e+00 
+  3400| 5.20e-06  4.60e-05  1.14e-05 -8.20e-01 -8.20e-01  1.77e-16  5.90e+00 
+  3500| 2.60e-06  2.80e-05  1.28e-05 -8.20e-01 -8.20e-01  7.29e-16  6.06e+00 
+  3600| 6.14e-06  4.07e-05  1.17e-05 -8.20e-01 -8.20e-01  1.41e-15  6.23e+00 
+  3700| 2.59e-06  2.02e-05  7.04e-06 -8.20e-01 -8.20e-01  7.81e-16  6.40e+00 
+  3800| 5.14e-06  3.43e-05  2.91e-05 -8.20e-01 -8.20e-01  3.08e-16  6.59e+00 
+  3900| 1.77e-06  2.43e-05  3.56e-07 -8.20e-01 -8.20e-01  1.42e-15  6.75e+00 
+  4000| 6.59e-06  2.22e-05  1.03e-05 -8.20e-01 -8.20e-01  2.65e-16  6.92e+00 
+  4100| 2.81e-06  2.11e-05  1.35e-05 -8.20e-01 -8.20e-01  1.65e-15  7.09e+00 
+  4200| 1.90e-06  2.91e-05  2.26e-05 -8.20e-01 -8.20e-01  1.54e-15  7.26e+00 
+  4300| 4.63e-06  3.09e-05  1.42e-06 -8.20e-01 -8.20e-01  1.15e-15  7.43e+00 
+  4400| 2.02e-06  1.69e-05  7.11e-06 -8.20e-01 -8.20e-01  8.27e-16  7.61e+00 
+  4500| 9.67e-06  2.00e-05  5.91e-06 -8.20e-01 -8.20e-01  5.69e-16  7.77e+00 
+  4600| 8.40e-07  4.23e-06  3.47e-06 -8.20e-01 -8.20e-01  2.54e-15  7.93e+00 
+  4700| 1.33e-06  9.78e-06  4.42e-08 -8.20e-01 -8.20e-01  8.54e-16  8.09e+00 
+  4800| 8.40e-07  2.94e-06  4.89e-06 -8.20e-01 -8.20e-01  2.71e-15  8.25e+00 
+  4900| 5.06e-07  1.84e-06  1.09e-06 -8.20e-01 -8.20e-01  2.43e-15  8.40e+00 
+  5000| 1.26e-06  3.09e-06  4.54e-06 -8.20e-01 -8.20e-01  5.48e-17  8.55e+00 
+  5100| 1.15e-07  2.30e-07  2.20e-07 -8.20e-01 -8.20e-01  4.83e-15  8.71e+00 
+  5200| 2.57e-08  2.21e-07  2.86e-09 -8.20e-01 -8.20e-01  3.43e-15  8.85e+00 
+  5300| 1.07e-04  2.94e-04  2.86e-04 -8.20e-01 -8.21e-01  4.81e-12  9.00e+00 
+  5400| 8.39e-09  1.30e-07  8.58e-08 -8.20e-01 -8.20e-01  1.72e-15  9.14e+00 
+  5500| 1.12e-08  1.68e-07  9.26e-09 -8.20e-01 -8.20e-01  2.03e-15  9.30e+00 
+  5600| 2.88e-06  1.85e-05  1.04e-05 -8.20e-01 -8.20e-01  6.67e-15  9.45e+00 
+  5700| 2.10e-05  2.21e-04  7.80e-05 -8.20e-01 -8.20e-01  8.08e-15  9.65e+00 
+  5800| 4.36e-07  1.32e-06  8.45e-07 -8.20e-01 -8.20e-01  1.36e-15  9.80e+00 
+  5900| 3.68e-06  3.39e-05  1.88e-06 -8.20e-01 -8.20e-01  1.39e-15  9.95e+00 
+  6000| 2.28e-08  2.05e-07  9.89e-08 -8.20e-01 -8.20e-01  1.26e-15  1.01e+01 
+  6100| 4.73e-08  7.77e-08  3.29e-08 -8.20e-01 -8.20e-01  1.86e-15  1.03e+01 
+  6200| 5.33e-09  1.65e-08  1.07e-08 -8.20e-01 -8.20e-01  2.61e-16  1.04e+01 
+  6300| 5.08e-08  3.23e-07  2.44e-07 -8.20e-01 -8.20e-01  1.71e-14  1.05e+01 
+  6400| 5.01e-14  8.48e-13  4.12e-13 -8.20e-01 -8.20e-01  4.17e-16  1.07e+01 
+  6402| 4.42e-14  1.73e-13  6.97e-14 -8.20e-01 -8.20e-01  7.23e-16  1.07e+01 
+----------------------------------------------------------------------------
+Status: Solved
+Timing: Solve time: 1.07e+01s
+	Lin-sys: nnz in L factor: 288182, avg solve time: 1.00e-03s
+	Cones: avg projection time: 4.08e-04s
+	Acceleration: avg step time: 1.74e-04s
+----------------------------------------------------------------------------
+Error metrics:
+dist(s, K) = 8.4711e-10, dist(y, K*) = 2.4476e-09, s&#39;y/|s||y| = -3.2607e-15
+primal res: |Ax + s - b|_2 / (1 + |b|_2) = 4.4176e-14
+dual res:   |A&#39;y + c|_2 / (1 + |c|_2) = 1.7338e-13
+rel gap:    |c&#39;x + b&#39;y| / (1 + |c&#39;x| + |b&#39;y|) = 6.9723e-14
+----------------------------------------------------------------------------
+c&#39;x = -0.8201, -b&#39;y = -0.8201
+============================================================================
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;λ = value(SDP_problem[:λ])
+Ps = [value.(P) for P in varP]
+@show(status, λ);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;status = OPTIMAL::TerminationStatusCode = 1
+λ = 0.8200500000003405
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;checking-the-solution&#34;&gt;Checking the solution&lt;/h2&gt;
+&lt;p&gt;Now we reconstruct the solution to the original problem over $\mathbb{R} \operatorname{SL}(N,\mathbb{Z})$, which essentially boils down to averaging the obtained solution over the orbits of wreath product action:
+$$Q=\frac{1}{|\Sigma|}\sum_{\sigma\in\Sigma}\sum_{\pi\in \widehat{\Sigma}} \dim{\pi}\cdot\sigma\left(U_{\pi}^T \sqrt{P_{\pi}} U_{\pi}\right).$$&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;Qs = real.(sqrt.(Ps));
+Q = PropertyT.reconstruct(Qs, orbit_data);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As explained in the paper the columns of the square-root of the solution matrix provide the coefficients for $\xi_i$&amp;rsquo;s in basis &lt;code&gt;E_R&lt;/code&gt; of the group ring. Below we compute the residual
+$$ b = \left(x - \lambda\Delta\right) - \sum \xi_i^*\xi_i.$$
+As we do it in floating-point arithmetic,  the result can&amp;rsquo;t be taken seriously.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;function SOS_residual(x::GroupRingElem, Q::Matrix)
+    RG = parent(x)
+    @time sos = PropertyT.compute_SOS(RG, Q);
+    return x - sos
+end
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;SOS_residual (generic function with 1 method)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;residual = SOS_residual(elt - λ*Δ, Q)
+@show norm(residual, 1);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;┌ Warning: Scalar and coeffs are in different rings! Promoting result to Float64
+└ @ GroupRings /home/kalmar/.julia/packages/GroupRings/UwACc/src/GroupRings.jl:303
+┌ Warning: Adding elements with different coefficient rings, Promoting result to Float64
+└ @ GroupRings /home/kalmar/.julia/packages/GroupRings/UwACc/src/GroupRings.jl:341
+
+
+  0.017873 seconds (977 allocations: 2.065 MiB)
+norm(residual, 1) = 8.53743030863061e-9
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;checking-in-interval-arithmetic&#34;&gt;Checking in interval arithmetic&lt;/h3&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using IntervalArithmetic
+IntervalArithmetic.setrounding(Interval, :tight)
+IntervalArithmetic.setformat(sigfigs=12);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here we resort to interval arithmetic to provide certified upper and lower bounds on the norm of the residual.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;We first change entries of &lt;code&gt;Q&lt;/code&gt; to narrow intervals&lt;/li&gt;
+&lt;li&gt;We project columns of &lt;code&gt;Q&lt;/code&gt; so that $0$ is in the sum of coefficients of each column (i.e. $\xi_i \in I \operatorname{SL}(N,\mathbb{Z})$)&lt;/li&gt;
+&lt;li&gt;We compute the sum of squares and the $\ell_1$-norm of the residual in the interval arithmetic.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The returned &lt;code&gt;check_columns_augmentation&lt;/code&gt; is a boolean flag to detect if the projection was successful, i.e. if we can guarantee that each column of &lt;code&gt;Q_aug&lt;/code&gt; can be represented by an element from the augmentation ideal. (If it were not successful, one may project &lt;code&gt;Q = PropertyT.augIdproj(Q)&lt;/code&gt; in the floating point arithmetic prior to the cell below).&lt;/p&gt;
+&lt;p&gt;The resulting norm of the residual is &lt;strong&gt;guaranteed&lt;/strong&gt; to be contained in the resulting interval. E.g. if each entry of &lt;code&gt;Q&lt;/code&gt; were changed into an honest rational number and all the computations were carried out in rational arithmetic, the rational $\ell_1$-norm will be contained in the interval $\ell_1$-norm.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;Q_aug, check_columns_augmentation = PropertyT.augIdproj(Interval, Q);
+@assert check_columns_augmentation
+elt_int = elt - @interval(λ)*Δ;
+residual_int = SOS_residual(elt_int, Q_aug)
+@show norm(residual_int, 1);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;┌ Warning: Scalar and coeffs are in different rings! Promoting result to Interval{Float64}
+└ @ GroupRings /home/kalmar/.julia/packages/GroupRings/UwACc/src/GroupRings.jl:303
+┌ Warning: Adding elements with different coefficient rings, Promoting result to Interval{Float64}
+└ @ GroupRings /home/kalmar/.julia/packages/GroupRings/UwACc/src/GroupRings.jl:341
+
+
+  3.296487 seconds (976 allocations: 4.070 MiB)
+norm(residual_int, 1) = [1.06387679475e-08, 1.09608901207e-08]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;certified_λ = @interval(λ) - 2^2*norm(residual_int,1)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;[0.820049956156, 0.820049957446]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;So $\operatorname{elt} - \lambda_0 \Delta \in \Sigma^2 I\operatorname{SL}(N, \mathbb{Z})$, where as $\lambda_0$ we could take the left end of the above interval:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;certified_λ.lo
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;0.8200499561567799
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using Dates
+now()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;2019-07-05T22:44:09.949
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;versioninfo()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;Julia Version 1.1.1
+Commit 55e36cc308 (2019-05-16 04:10 UTC)
+Platform Info:
+  OS: Linux (x86_64-pc-linux-gnu)
+  CPU: Intel(R) Core(TM) i5-6200U CPU @ 2.30GHz
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-6.0.1 (ORCJIT, skylake)
+Environment:
+  JULIA_NUM_THREADS = 2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Replication Details for 1712.07167</title>
+      <link>https://www.math.kit.edu/user/kaluba/post/1712.07176/</link>
+      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
+      <guid>https://www.math.kit.edu/user/kaluba/post/1712.07176/</guid>
+      <description>&lt;p&gt;This post documents replication details for paper 
+&lt;a href=&#34;https://www.math.kit.edu/user/kaluba/publication/2017-autf5-has-t/&#34;&gt;&lt;em&gt;$\operatorname{Aut}(\mathbb{F}_5)$ has property (T)&lt;/em&gt;&lt;/a&gt; by M. Kaluba, P.W. Nowak and N. Ozawa.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    The current version of replication details is located in Nextjournal &lt;a href=&#34;https://nextjournal.com/kalmar/property-t-in-julia&#34;&gt;docker container&lt;/a&gt;. The following notes are exported from there.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;h2&gt;Table of Contents&lt;/h2&gt;
+&lt;nav id=&#34;TableOfContents&#34;&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&#34;#getting-julia-project&#34;&gt;Getting julia project&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&#34;#running-tests-optional&#34;&gt;Running tests (optional)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&#34;#getting-the-pre-computed-data&#34;&gt;Getting the pre-computed data&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&#34;#recomputing-from-scratch-group-ring-structure&#34;&gt;Recomputing from scratch group ring structure&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&#34;#loading-the-solution&#34;&gt;Loading the solution&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&#34;#certification&#34;&gt;Certification&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;
+&lt;h1 id=&#34;setting-up-the-environment&#34;&gt;Setting up the environment&lt;/h1&gt;
+&lt;p&gt;The code below is designed to run on julia &lt;code&gt;1.1.0&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Before running any computations we need to set-up the environment and download the pre-computed data.&lt;/p&gt;
+&lt;h2 id=&#34;getting-julia-project&#34;&gt;Getting julia project&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;git clone https://git.wmi.amu.edu.pl/kalmar/1712.07167.git
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using Pkg
+Pkg.activate(&amp;quot;1712.07167&amp;quot;)
+Pkg.instantiate()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;Pkg.status()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;running-tests-optional&#34;&gt;Running tests (optional)&lt;/h2&gt;
+&lt;p&gt;Now everything seems to be installed, but let&amp;rsquo;s check that things run as they should:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;Pkg.test(&amp;quot;PropertyT&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;getting-the-pre-computed-data&#34;&gt;Getting the pre-computed data&lt;/h2&gt;
+&lt;p&gt;We need to download and unpack the data from 
+&lt;a href=&#34;https://zenodo.org/record/1133440&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Zenodo&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;wget -O oSAutF5_r2.tar.xz &amp;quot;https://zenodo.org/record/1913734/files/oSAutF5_r2.tar.xz?download=1&amp;quot;
+tar xvf oSAutF5_r2.tar.xz
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The above commands need to be typically run only once.&lt;/p&gt;
+&lt;h1 id=&#34;replicating-computations-for-171207167httpsarxivorgabs171207167&#34;&gt;Replicating computations for 
+&lt;a href=&#34;https://arxiv.org/abs/1712.07167&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;1712.07167&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;This section shows how one should be able to replicate the computations presented in 
+&lt;a href=&#34;https://arxiv.org/abs/1712.07167&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;$\operatorname{Aut}(\mathbb{F}_5)$ &lt;/a&gt;&lt;em&gt;
+&lt;a href=&#34;https://arxiv.org/abs/1712.07167&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;has property (T)&lt;/a&gt;&lt;/em&gt; by M. Kaluba, P.W. Nowak and N. Ozawa.&lt;/p&gt;
+&lt;p&gt;To speed-up certain computations you may wish to set the environmental variable &lt;code&gt;JULIA_NUM_THREADS&lt;/code&gt; to the number of (the physical) cores of cpu.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using Pkg
+Pkg.activate(&amp;quot;1712.07167&amp;quot;)
+using Groups
+using GroupRings
+using PropertyT
+
+using SparseArrays
+using LinearAlgebra
+using IntervalArithmetic
+using JLD
+BLAS.set_num_threads(Threads.nthreads())
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In the cell below we define the group ring of the special automorphism group of the free group (by reading the division table from &lt;code&gt;pm.jld&lt;/code&gt; file) and construct the Laplacian $$ \Delta_5 = |S_5| - \sum_{s\in S_5} s $$&lt;/p&gt;
+&lt;p&gt;remembering that in the ordered basis of $\mathbb{R}\operatorname{SAut}(\mathbb{F}_5)$ the identity comes first with generators following directly after. Note that the generating set $S = S_5$ of $\operatorname{SAut}(\mathbb{F}_5)$ consists of exactly $80$ transvections (due to technical issue with the transition from &lt;code&gt;julia-0.6&lt;/code&gt; to &lt;code&gt;julia-1.0&lt;/code&gt; we can not load the supplied &lt;code&gt;oSAutF5_r2/delta.jld&lt;/code&gt; file directly).&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;G = SAut(FreeGroup(5))
+pm = load(&amp;quot;oSAutF5_r2/pm.jld&amp;quot;, &amp;quot;pm&amp;quot;)
+RG = GroupRing(G, pm)
+@show RG
+S_size = 80
+Δ_coeff = SparseVector(maximum(pm), collect(1:(1+S_size)), [S_size; -ones(S_size)])
+Δ = GroupRingElem(Δ_coeff, RG);
+Δ² = Δ^2;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;recomputing-from-scratch-group-ring-structure&#34;&gt;Recomputing from scratch group ring structure&lt;/h2&gt;
+&lt;p&gt;The computations above could be re-done from scratch (i.e. without relying on the provided &lt;code&gt;pm&lt;/code&gt;) by executing&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;radius = 2
+G = SAut(FreeGroup(5))
+S = AbstractAlgebra.gens(G);
+@time E₄, sizes = Groups.generate_balls(S, Id, radius=2radius) # takes lots of time and space
+E₄_rdict = GroupRings.reverse_dict(E₄)
+@time pm = GroupRings.create_pm(E₄, E₄_rdict, sizes[radius]; twisted=true) # takes lots of time and space
+RG = GroupRing(G, E₄, E₄_rdict, pm)
+Δ = PropertyT.spLaplacian(RG, S)
+Δ² = Δ^2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;loading-the-solution&#34;&gt;Loading the solution&lt;/h2&gt;
+&lt;p&gt;Next we load the solution $(\lambda_0, P_0)$:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;λ₀ = load(&amp;quot;oSAutF5_r2/1.3/lambda.jld&amp;quot;, &amp;quot;λ&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As can be seen, we will be comparing the accuracy of $P_0​$ below against the numerical value of $\lambda_0 = 1.3​$.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;P₀ = load(&amp;quot;oSAutF5_r2/1.3/SDPmatrix.jld&amp;quot;, &amp;quot;P&amp;quot;)
+@time Q = real(sqrt(P₀))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;certification&#34;&gt;Certification&lt;/h2&gt;
+&lt;p&gt;Now we project the columns of $Q$ to the augmentation ideal, in interval arithmetic. The returned &lt;code&gt;check_columns_augmentation&lt;/code&gt; is a boolean flag to detect if the projection was successful, i.e. if we can guarantee that each column of &lt;code&gt;Q_aug&lt;/code&gt; can be represented by an element from the augmentation ideal. (If it were not successful, one may project &lt;code&gt;Q = PropertyT.augIdproj(Q)&lt;/code&gt; in the floating point arithmetic prior to the cell below).&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;Q_aug, check_columns_augmentation = PropertyT.augIdproj(Interval, Q);
+@show check_columns_augmentation
+if !check_columns_augmentation
+  @warn &amp;quot;Columns of Q are not guaranteed to represent elements of the augmentation ideal!&amp;quot;
+end
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally we compute the actual sum of squares decomposition represented by &lt;code&gt;Q_aug&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;@time sos = PropertyT.compute_SOS(RG, Q_aug);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The residual of the solution and $\Delta^2 - \lambda_0\Delta$ is&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;residual = Δ² - @interval(λ₀)*Δ - sos;
+norm(residual, 1)
+[8.35381e-06, 8.42859e-06]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;thus we can certify that the spectral gap $\lambda(\operatorname{SAut}(\mathbb{F}_5), S_5)$ is at least the lower end of the interval&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;certified = @interval(λ₀) - 2^2*norm(residual, 1)
+[1.29996, 1.29997]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;which is exactly&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;print(certified.lo)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This, via estimate $\kappa \geqslant \sqrt{\frac{2\lambda}{|S|}}$ leads to the lower bound on the Kazhdan constant of&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;κ = (sqrt(2certified/S_size)).lo
+0.180275
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;deprecated-instructions-for-running-with-julia-06&#34;&gt;&lt;strong&gt;Deprecated&lt;/strong&gt; Instructions for running with &lt;code&gt;julia-0.6&lt;/code&gt;.&lt;/h1&gt;
+&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    This section is left only for &lt;em&gt;historic reasons&lt;/em&gt; of the specific code run in preparation of &lt;a href=&#34;https://arxiv.org/abs/1712.07167&#34;&gt;1712.07167&lt;/a&gt;.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Clone &lt;code&gt;https://git.wmi.amu.edu.pl/kalmar/GroupsWithPropertyT&lt;/code&gt; and checkout the &lt;code&gt;1712.07167&lt;/code&gt; branch:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git clone https://git.wmi.amu.edu.pl/kalmar/GroupsWithPropertyT.git
+cd ./GroupsWithPropertyT
+git checkout 1712.07167
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In &lt;code&gt;julia&lt;/code&gt;s REPL execute&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;Pkg.add(&amp;quot;ArgParse&amp;quot;)
+Pkg.add(&amp;quot;Nemo&amp;quot;)
+Pkg.clone(&amp;quot;https://git.wmi.amu.edu.pl/kalmar/Groups.jl.git&amp;quot;)
+Pkg.checkout(&amp;quot;Groups&amp;quot;, &amp;quot;1712.07167&amp;quot;)
+Pkg.clone(&amp;quot;https://git.wmi.amu.edu.pl/kalmar/GroupRings.jl.git&amp;quot;)
+Pkg.checkout(&amp;quot;GroupRings&amp;quot;, &amp;quot;1712.07167&amp;quot;)
+Pkg.clone(&amp;quot;https://git.wmi.amu.edu.pl/kalmar/PropertyT.jl.git&amp;quot;)
+Pkg.checkout(&amp;quot;PropertyT&amp;quot;, &amp;quot;1712.07167&amp;quot;)
+Pkg.checkout(&amp;quot;SCS&amp;quot;)
+Pkg.build(&amp;quot;SCS&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This should resolve all the dependencies. Quit &lt;code&gt;julia&lt;/code&gt; and place the &lt;code&gt;oSAutF5_r2&lt;/code&gt; folder downloaded from 
+&lt;a href=&#34;https://doi.org/10.5281/zenodo.1133441&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Zenodo research data repository&lt;/a&gt; inside &lt;code&gt;GroupsWithPropertyT&lt;/code&gt; folder. To verify the decomposition of $\Delta^2 - \lambda \Delta$ for the group run (if You have a &lt;code&gt;4&lt;/code&gt;-core CPU at Your disposal)&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;julia AutFN_orbit.jl -N 5 --upper-bound=1.2 --cpus 4
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If You want to generate the (twisted) multiplication table (and other required files) on Your own delete all &lt;code&gt;*.jld&lt;/code&gt; files from the &lt;code&gt;oSAutF5_r2&lt;/code&gt; folder (except for &lt;code&gt;1.2&lt;/code&gt; folder and its contents) and run the same command again.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    You need at least &lt;code&gt;32&lt;/code&gt;GB of RAM and spare &lt;code&gt;24&lt;/code&gt;h of Your CPU.
+  &lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Replication details for 1703.09680</title>
+      <link>https://www.math.kit.edu/user/kaluba/post/1703.09680/</link>
+      <pubDate>Tue, 28 Mar 2017 00:00:00 +0000</pubDate>
+      <guid>https://www.math.kit.edu/user/kaluba/post/1703.09680/</guid>
+      <description>&lt;p&gt;This post documents replication details for paper 
+&lt;a href=&#34;https://www.math.kit.edu/user/kaluba/publication/2017-certifying-spectral-gaps/&#34;&gt;&lt;em&gt;Certifying numerical estimates of spectral gaps&lt;/em&gt;&lt;/a&gt; by M. Kaluba, P.W. Nowak.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    This guide is rather outdated. All of the computations can be done (and much more effectively) by exploiting the symmetry of the Laplacian as is described in &lt;a href=&#34;https://www.math.kit.edu/user/kaluba/post/1712.07176/&#34;&gt;Replication Details for 1712.07167&lt;/a&gt;. For more details on the method see &lt;a href=&#34;https://www.math.kit.edu/user/kaluba/publication/2017-autf5-has-t/&#34;&gt;$\operatorname{Aut}(\mathbb{F}_5)$ has property (T)&lt;/a&gt;.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;h2&gt;Table of Contents&lt;/h2&gt;
+&lt;nav id=&#34;TableOfContents&#34;&gt;&lt;/nav&gt;
+&lt;h1 id=&#34;installing&#34;&gt;Installing&lt;/h1&gt;
+&lt;p&gt;To run the code You need &lt;code&gt;julia-v0.5&lt;/code&gt; (should work on &lt;code&gt;v0.6&lt;/code&gt;, but with warnings).
+You also need to install julia packages: &lt;code&gt;Nemo-v0.6.3&lt;/code&gt;, &lt;code&gt;ArgParse&lt;/code&gt;. To do so in &lt;code&gt;julia&lt;/code&gt;&amp;rsquo;s REPL run:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;Pkg.update()
+Pkg.add(&amp;quot;Nemo&amp;quot;)
+Pkg.add(&amp;quot;ArgParse&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then clone the main repository of &lt;code&gt;Groups.jl&lt;/code&gt;, &lt;code&gt;GroupRings.jl&lt;/code&gt; and &lt;code&gt;PropertyT.jl&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;Pkg.clone(&amp;quot;https://git.wmi.amu.edu.pl/kalmar/Groups.jl.git&amp;quot;)
+Pkg.clone(&amp;quot;https://git.wmi.amu.edu.pl/kalmar/GroupRings.jl.git&amp;quot;)
+Pkg.clone(&amp;quot;https://git.wmi.amu.edu.pl/kalmar/PropertyT.jl.git&amp;quot;)
+Pkg.resolve()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This should resolve all dependencies (e.g. install &lt;code&gt;JuMP&lt;/code&gt;, &lt;code&gt;SCS&lt;/code&gt;, &lt;code&gt;IntervalArithmetic&lt;/code&gt;, &lt;code&gt;JLD&lt;/code&gt;, &lt;code&gt;Memento&lt;/code&gt;). Exit julia and clone 
+&lt;a href=&#34;https://git.wmi.amu.edu.pl/kalmar/GroupsWithPropertyT&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;GroupswithPropertyT&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;git clone https://git.wmi.amu.edu.pl/kalmar/GroupsWithPropertyT.git
+cd GroupswithPropertyT
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;running&#34;&gt;Running&lt;/h1&gt;
+&lt;p&gt;To check that $\Delta^2-\lambda\Delta$ is not decomposable to a sum of hermitian squares of elements in the ball of radius $2$ in $SL(2,7)$ run&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;julia SL.jl -N 2 -p 7 --radius 2 --iterations 100000
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;(~30 seconds, depending on hardware). The monotonous decreasing $\lambda$ during the optimisation is in column &lt;code&gt;pri obj&lt;/code&gt; (or &lt;code&gt;dua obj&lt;/code&gt;) of &lt;code&gt;solver.log&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Compare this to&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;julia SL.jl -N 2 -p 7 --radius 3 --iterations 100000
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;which finds $\lambda \geq 0.5857$ and decomposes $\Delta^2-\lambda\Delta$ into sum of $47$ hermitian squares in less than 20 seconds (including certification).&lt;/p&gt;
+&lt;p&gt;If You see in the output (or in &lt;code&gt;full.log&lt;/code&gt;) that the upper end of the interval where $\lVert\Delta^2 - \lambda\Delta - \sum{\xi_i}^*\xi_i\rVert_1$ belongs to is too large (resulting in positive &lt;code&gt;Floating point distance&lt;/code&gt;, but negative &lt;code&gt;The Augmentation-projected actual distance&lt;/code&gt;), decrease the &lt;code&gt;--tol&lt;/code&gt; parameter, e.g.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;julia SL.jl -N 2 -p 7 --radius 3 --iterations 100000 --tol 1e-9
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;to achieve a better estimate (the residuals $\ell_1$-norm should be around $|B_d(e))|*tol$)&lt;/p&gt;
+&lt;h1 id=&#34;help&#34;&gt;Help&lt;/h1&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;julia SL.jl --help
+usage: SL.jl [--tol TOL] [--iterations ITERATIONS]
+             [--upper-bound UPPER-BOUND] [--cpus CPUS] [-N N] [-p P]
+             [--radius RADIUS] [-h]
+
+optional arguments:
+  --tol TOL             set numerical tolerance for the SDP solver
+                        (type: Float64, default: 1.0e-6)
+  --iterations ITERATIONS
+                        set maximal number of iterations for the SDP
+                        solver (default: 20000) (type: Int64, default:
+                        50000)
+  --upper-bound UPPER-BOUND
+                        Set an upper bound for the spectral gap (type:
+                        Float64, default: Inf)
+  --cpus CPUS           Set number of cpus used by solver (type:
+                        Int64)
+  -N N                  Consider elementary matrices EL(N) (type:
+                        Int64, default: 2)
+  -p P                  Matrices over field of p-elements (p=0 =&amp;gt; over
+                        ZZ) (type: Int64, default: 0)
+  --radius RADIUS       Radius of ball B_r(e,S) to find solution over
+                        (type: Int64, default: 2)
+  -h, --help            show this help message and exit
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;specific-version-of-the-article&#34;&gt;Specific version of the article&lt;/h1&gt;
+&lt;p&gt;To checkout the specific versions of packages used for 
+&lt;a href=&#34;https://arxiv.org/abs/1703.09680&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Certifying Numerical Estimates of Spectral Gaps&lt;/a&gt; run (inside &lt;code&gt;GroupswithPropertyT&lt;/code&gt;)&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;git checkout 1703.09680v1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You need to link &lt;code&gt;~/.julia/v0.5/GroupRings&lt;/code&gt; to &lt;code&gt;~/.julia/v0.5/GroupAlgebras&lt;/code&gt; due to change in the name of the package. Then run in &lt;code&gt;julia&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;Pkg.checkout(&amp;quot;GroupRings&amp;quot;, &amp;quot;1703.09680v1&amp;quot;)
+Pkg.checkout(&amp;quot;PropertyT&amp;quot;, &amp;quot;1703.09680v1&amp;quot;)
+Pkg.resolve()
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

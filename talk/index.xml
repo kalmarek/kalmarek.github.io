@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Recent &amp; Upcoming Talks | Marek Kaluba Academic Page</title>
+    <link>https://www.math.kit.edu/user/kaluba/talk/</link>
+      <atom:link href="https://www.math.kit.edu/user/kaluba/talk/index.xml" rel="self" type="application/rss+xml" />
+    <description>Recent &amp; Upcoming Talks</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2024 Marek Kaluba</copyright>
+    <image>
+      <url>https://www.math.kit.edu/user/kaluba/img/m.png</url>
+      <title>Recent &amp; Upcoming Talks</title>
+      <link>https://www.math.kit.edu/user/kaluba/talk/</link>
+    </image>
+    
+  </channel>
+</rss>

@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Marek Kaluba">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="This post documents replication details for paper $\operatorname{Aut}(\mathbb{F}_5)$ has property (T) by M. Kaluba, P.W. Nowak and N. Ozawa.
+ The current version of replication details is located in Nextjournal docker container. The following notes are exported from there.   Table of Contents  Getting julia project Running tests (optional) Getting the pre-computed data   Recomputing from scratch group ring structure Loading the solution Certification   Setting up the environment The code below is designed to run on julia 1.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://www.math.kit.edu/user/kaluba/post/1712.07176/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#3f51b5">
+  
+
+  
+  
+  
+  <script src="/user/kaluba/js/mathjax-config.js"></script>
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/user/kaluba/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/user/kaluba/index.webmanifest">
+  <link rel="icon" type="image/png" href="/user/kaluba/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/user/kaluba/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="https://www.math.kit.edu/user/kaluba/post/1712.07176/">
+
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@GimmeDaNumba">
+  <meta property="twitter:creator" content="@GimmeDaNumba">
+  
+  <meta property="og:site_name" content="Marek Kaluba Academic Page">
+  <meta property="og:url" content="https://www.math.kit.edu/user/kaluba/post/1712.07176/">
+  <meta property="og:title" content="Replication Details for 1712.07167 | Marek Kaluba Academic Page">
+  <meta property="og:description" content="This post documents replication details for paper $\operatorname{Aut}(\mathbb{F}_5)$ has property (T) by M. Kaluba, P.W. Nowak and N. Ozawa.
+ The current version of replication details is located in Nextjournal docker container. The following notes are exported from there.   Table of Contents  Getting julia project Running tests (optional) Getting the pre-computed data   Recomputing from scratch group ring structure Loading the solution Certification   Setting up the environment The code below is designed to run on julia 1."><meta property="og:image" content="https://www.math.kit.edu/user/kaluba/img/m.png">
+  <meta property="twitter:image" content="https://www.math.kit.edu/user/kaluba/img/m.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2017-12-21T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2017-12-21T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.math.kit.edu/user/kaluba/post/1712.07176/"
+  },
+  "headline": "Replication Details for 1712.07167",
+  
+  "datePublished": "2017-12-21T00:00:00Z",
+  "dateModified": "2017-12-21T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Marek Kaluba"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Marek Kaluba Academic Page",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.math.kit.edu/user/kaluba/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "This post documents replication details for paper $\\operatorname{Aut}(\\mathbb{F}_5)$ has property (T) by M. Kaluba, P.W. Nowak and N. Ozawa.\n The current version of replication details is located in Nextjournal docker container. The following notes are exported from there.   Table of Contents  Getting julia project Running tests (optional) Getting the pre-computed data   Recomputing from scratch group ring structure Loading the solution Certification   Setting up the environment The code below is designed to run on julia 1."
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Replication Details for 1712.07167 | Marek Kaluba Academic Page</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/user/kaluba/">Marek Kaluba Academic Page</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/user/kaluba/">Marek Kaluba Academic Page</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/user/kaluba/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/user/kaluba/#featured"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/user/kaluba/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/user/kaluba/teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/user/kaluba/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      <li class="nav-item">
+        <a class="nav-link js-dark-toggle" href="#"><i class="fas fa-moon" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Replication Details for 1712.07167</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Dec 21, 2017
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    4 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      <p>This post documents replication details for paper 
+<a href="https://www.math.kit.edu/user/kaluba/publication/2017-autf5-has-t/"><em>$\operatorname{Aut}(\mathbb{F}_5)$ has property (T)</em></a> by M. Kaluba, P.W. Nowak and N. Ozawa.</p>
+<div class="alert alert-note">
+  <div>
+    The current version of replication details is located in Nextjournal <a href="https://nextjournal.com/kalmar/property-t-in-julia">docker container</a>. The following notes are exported from there.
+  </div>
+</div>
+<h2>Table of Contents</h2>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#getting-julia-project">Getting julia project</a></li>
+    <li><a href="#running-tests-optional">Running tests (optional)</a></li>
+    <li><a href="#getting-the-pre-computed-data">Getting the pre-computed data</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#recomputing-from-scratch-group-ring-structure">Recomputing from scratch group ring structure</a></li>
+    <li><a href="#loading-the-solution">Loading the solution</a></li>
+    <li><a href="#certification">Certification</a></li>
+  </ul>
+</nav>
+<h1 id="setting-up-the-environment">Setting up the environment</h1>
+<p>The code below is designed to run on julia <code>1.1.0</code>.</p>
+<p>Before running any computations we need to set-up the environment and download the pre-computed data.</p>
+<h2 id="getting-julia-project">Getting julia project</h2>
+<pre><code class="language-bash">git clone https://git.wmi.amu.edu.pl/kalmar/1712.07167.git
+</code></pre>
+<pre><code class="language-julia">using Pkg
+Pkg.activate(&quot;1712.07167&quot;)
+Pkg.instantiate()
+</code></pre>
+<pre><code class="language-julia">Pkg.status()
+</code></pre>
+<h2 id="running-tests-optional">Running tests (optional)</h2>
+<p>Now everything seems to be installed, but let&rsquo;s check that things run as they should:</p>
+<pre><code class="language-julia">Pkg.test(&quot;PropertyT&quot;)
+</code></pre>
+<h2 id="getting-the-pre-computed-data">Getting the pre-computed data</h2>
+<p>We need to download and unpack the data from 
+<a href="https://zenodo.org/record/1133440" target="_blank" rel="noopener">Zenodo</a></p>
+<pre><code class="language-bash">wget -O oSAutF5_r2.tar.xz &quot;https://zenodo.org/record/1913734/files/oSAutF5_r2.tar.xz?download=1&quot;
+tar xvf oSAutF5_r2.tar.xz
+</code></pre>
+<p>The above commands need to be typically run only once.</p>
+<h1 id="replicating-computations-for-171207167httpsarxivorgabs171207167">Replicating computations for 
+<a href="https://arxiv.org/abs/1712.07167" target="_blank" rel="noopener">1712.07167</a></h1>
+<p>This section shows how one should be able to replicate the computations presented in 
+<a href="https://arxiv.org/abs/1712.07167" target="_blank" rel="noopener">$\operatorname{Aut}(\mathbb{F}_5)$ </a><em>
+<a href="https://arxiv.org/abs/1712.07167" target="_blank" rel="noopener">has property (T)</a></em> by M. Kaluba, P.W. Nowak and N. Ozawa.</p>
+<p>To speed-up certain computations you may wish to set the environmental variable <code>JULIA_NUM_THREADS</code> to the number of (the physical) cores of cpu.</p>
+<pre><code class="language-julia">using Pkg
+Pkg.activate(&quot;1712.07167&quot;)
+using Groups
+using GroupRings
+using PropertyT
+
+using SparseArrays
+using LinearAlgebra
+using IntervalArithmetic
+using JLD
+BLAS.set_num_threads(Threads.nthreads())
+</code></pre>
+<p>In the cell below we define the group ring of the special automorphism group of the free group (by reading the division table from <code>pm.jld</code> file) and construct the Laplacian $$ \Delta_5 = |S_5| - \sum_{s\in S_5} s $$</p>
+<p>remembering that in the ordered basis of $\mathbb{R}\operatorname{SAut}(\mathbb{F}_5)$ the identity comes first with generators following directly after. Note that the generating set $S = S_5$ of $\operatorname{SAut}(\mathbb{F}_5)$ consists of exactly $80$ transvections (due to technical issue with the transition from <code>julia-0.6</code> to <code>julia-1.0</code> we can not load the supplied <code>oSAutF5_r2/delta.jld</code> file directly).</p>
+<pre><code class="language-julia">G = SAut(FreeGroup(5))
+pm = load(&quot;oSAutF5_r2/pm.jld&quot;, &quot;pm&quot;)
+RG = GroupRing(G, pm)
+@show RG
+S_size = 80
+Δ_coeff = SparseVector(maximum(pm), collect(1:(1+S_size)), [S_size; -ones(S_size)])
+Δ = GroupRingElem(Δ_coeff, RG);
+Δ² = Δ^2;
+</code></pre>
+<h2 id="recomputing-from-scratch-group-ring-structure">Recomputing from scratch group ring structure</h2>
+<p>The computations above could be re-done from scratch (i.e. without relying on the provided <code>pm</code>) by executing</p>
+<pre><code class="language-julia">radius = 2
+G = SAut(FreeGroup(5))
+S = AbstractAlgebra.gens(G);
+@time E₄, sizes = Groups.generate_balls(S, Id, radius=2radius) # takes lots of time and space
+E₄_rdict = GroupRings.reverse_dict(E₄)
+@time pm = GroupRings.create_pm(E₄, E₄_rdict, sizes[radius]; twisted=true) # takes lots of time and space
+RG = GroupRing(G, E₄, E₄_rdict, pm)
+Δ = PropertyT.spLaplacian(RG, S)
+Δ² = Δ^2
+</code></pre>
+<h2 id="loading-the-solution">Loading the solution</h2>
+<p>Next we load the solution $(\lambda_0, P_0)$:</p>
+<pre><code class="language-julia">λ₀ = load(&quot;oSAutF5_r2/1.3/lambda.jld&quot;, &quot;λ&quot;)
+</code></pre>
+<p>As can be seen, we will be comparing the accuracy of $P_0​$ below against the numerical value of $\lambda_0 = 1.3​$.</p>
+<pre><code class="language-julia">P₀ = load(&quot;oSAutF5_r2/1.3/SDPmatrix.jld&quot;, &quot;P&quot;)
+@time Q = real(sqrt(P₀))
+</code></pre>
+<h2 id="certification">Certification</h2>
+<p>Now we project the columns of $Q$ to the augmentation ideal, in interval arithmetic. The returned <code>check_columns_augmentation</code> is a boolean flag to detect if the projection was successful, i.e. if we can guarantee that each column of <code>Q_aug</code> can be represented by an element from the augmentation ideal. (If it were not successful, one may project <code>Q = PropertyT.augIdproj(Q)</code> in the floating point arithmetic prior to the cell below).</p>
+<pre><code class="language-julia">Q_aug, check_columns_augmentation = PropertyT.augIdproj(Interval, Q);
+@show check_columns_augmentation
+if !check_columns_augmentation
+  @warn &quot;Columns of Q are not guaranteed to represent elements of the augmentation ideal!&quot;
+end
+</code></pre>
+<p>Finally we compute the actual sum of squares decomposition represented by <code>Q_aug</code>:</p>
+<pre><code class="language-julia">@time sos = PropertyT.compute_SOS(RG, Q_aug);
+</code></pre>
+<p>The residual of the solution and $\Delta^2 - \lambda_0\Delta$ is</p>
+<pre><code class="language-julia">residual = Δ² - @interval(λ₀)*Δ - sos;
+norm(residual, 1)
+[8.35381e-06, 8.42859e-06]
+</code></pre>
+<p>thus we can certify that the spectral gap $\lambda(\operatorname{SAut}(\mathbb{F}_5), S_5)$ is at least the lower end of the interval</p>
+<pre><code class="language-julia">certified = @interval(λ₀) - 2^2*norm(residual, 1)
+[1.29996, 1.29997]
+</code></pre>
+<p>which is exactly</p>
+<pre><code class="language-julia">print(certified.lo)
+</code></pre>
+<p>This, via estimate $\kappa \geqslant \sqrt{\frac{2\lambda}{|S|}}$ leads to the lower bound on the Kazhdan constant of</p>
+<pre><code class="language-julia">κ = (sqrt(2certified/S_size)).lo
+0.180275
+</code></pre>
+<h1 id="deprecated-instructions-for-running-with-julia-06"><strong>Deprecated</strong> Instructions for running with <code>julia-0.6</code>.</h1>
+<div class="alert alert-warning">
+  <div>
+    This section is left only for <em>historic reasons</em> of the specific code run in preparation of <a href="https://arxiv.org/abs/1712.07167">1712.07167</a>.
+  </div>
+</div>
+<p>Clone <code>https://git.wmi.amu.edu.pl/kalmar/GroupsWithPropertyT</code> and checkout the <code>1712.07167</code> branch:</p>
+<pre><code>git clone https://git.wmi.amu.edu.pl/kalmar/GroupsWithPropertyT.git
+cd ./GroupsWithPropertyT
+git checkout 1712.07167
+</code></pre>
+<p>In <code>julia</code>s REPL execute</p>
+<pre><code class="language-julia">Pkg.add(&quot;ArgParse&quot;)
+Pkg.add(&quot;Nemo&quot;)
+Pkg.clone(&quot;https://git.wmi.amu.edu.pl/kalmar/Groups.jl.git&quot;)
+Pkg.checkout(&quot;Groups&quot;, &quot;1712.07167&quot;)
+Pkg.clone(&quot;https://git.wmi.amu.edu.pl/kalmar/GroupRings.jl.git&quot;)
+Pkg.checkout(&quot;GroupRings&quot;, &quot;1712.07167&quot;)
+Pkg.clone(&quot;https://git.wmi.amu.edu.pl/kalmar/PropertyT.jl.git&quot;)
+Pkg.checkout(&quot;PropertyT&quot;, &quot;1712.07167&quot;)
+Pkg.checkout(&quot;SCS&quot;)
+Pkg.build(&quot;SCS&quot;)
+</code></pre>
+<p>This should resolve all the dependencies. Quit <code>julia</code> and place the <code>oSAutF5_r2</code> folder downloaded from 
+<a href="https://doi.org/10.5281/zenodo.1133441" target="_blank" rel="noopener">Zenodo research data repository</a> inside <code>GroupsWithPropertyT</code> folder. To verify the decomposition of $\Delta^2 - \lambda \Delta$ for the group run (if You have a <code>4</code>-core CPU at Your disposal)</p>
+<pre><code class="language-julia">julia AutFN_orbit.jl -N 5 --upper-bound=1.2 --cpus 4
+</code></pre>
+<p>If You want to generate the (twisted) multiplication table (and other required files) on Your own delete all <code>*.jld</code> files from the <code>oSAutF5_r2</code> folder (except for <code>1.2</code> folder and its contents) and run the same command again.</p>
+<div class="alert alert-note">
+  <div>
+    You need at least <code>32</code>GB of RAM and spare <code>24</code>h of Your CPU.
+  </div>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/user/kaluba/authors/admin/avatar_hu285e2fa4d2e21e4da229db3462cca622_172573_270x270_fill_lanczos_center_3.png" alt="Avatar">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://www.math.kit.edu/user/kaluba/">Marek Kaluba</a></h5>
+      <h6 class="card-subtitle">Mathematician</h6>
+      <p class="card-text">My research interests include computational algebra, geometric group theory (in particular: property (T)) and (previously) surgery aspects of manifolds.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:kalmar%e2%88%82amu.edu.pl" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://arxiv.org/find/math/1/au:&#43;Kaluba_M/0/1/0/all/0/1" target="_blank" rel="noopener">
+        <i class="ai ai-arxiv"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/kalmarek" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://pgp.mit.edu/pks/lookup?op=get&amp;search=0x8BF1A3855328FC15" target="_blank" rel="noopener">
+        <i class="fas fa-key"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://twitter.com/GimmeDaNumba" target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/user/kaluba/files/cv-english.pdf" >
+        <i class="ai ai-cv"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/julia.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/bash.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/user/kaluba/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/user/kaluba/js/academic.min.6f1005d1a84220e2f466ff3d8e712f31.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © 2024 Marek Kaluba &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

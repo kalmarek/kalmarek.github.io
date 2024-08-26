@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Computational Group Theory | Marek Kaluba Academic Page</title>
+    <link>https://www.math.kit.edu/user/kaluba/teaching/cgt/</link>
+      <atom:link href="https://www.math.kit.edu/user/kaluba/teaching/cgt/index.xml" rel="self" type="application/rss+xml" />
+    <description>Computational Group Theory</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2024 Marek Kaluba</copyright><lastBuildDate>Fri, 01 Apr 2022 18:25:21 +0200</lastBuildDate>
+    <image>
+      <url>https://www.math.kit.edu/user/kaluba/img/m.png</url>
+      <title>Computational Group Theory</title>
+      <link>https://www.math.kit.edu/user/kaluba/teaching/cgt/</link>
+    </image>
+    
+  </channel>
+</rss>

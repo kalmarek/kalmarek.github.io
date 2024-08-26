@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blanks | Marek Kaluba Academic Page</title>
+    <link>https://www.math.kit.edu/user/kaluba/blank/</link>
+      <atom:link href="https://www.math.kit.edu/user/kaluba/blank/index.xml" rel="self" type="application/rss+xml" />
+    <description>Blanks</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2024 Marek Kaluba</copyright><lastBuildDate>Fri, 17 May 2019 12:27:06 +0200</lastBuildDate>
+    <image>
+      <url>https://www.math.kit.edu/user/kaluba/img/m.png</url>
+      <title>Blanks</title>
+      <link>https://www.math.kit.edu/user/kaluba/blank/</link>
+    </image>
+    
+    <item>
+      <title>Past talks since 2016</title>
+      <link>https://www.math.kit.edu/user/kaluba/blank/past-talks/</link>
+      <pubDate>Fri, 17 May 2019 12:27:06 +0200</pubDate>
+      <guid>https://www.math.kit.edu/user/kaluba/blank/past-talks/</guid>
+      <description>&lt;h1 id=&#34;2021&#34;&gt;2021&lt;/h1&gt;
+&lt;h1 id=&#34;2020&#34;&gt;2020&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Polymake.jl: A new interface to polymake&lt;/em&gt; during 
+&lt;a href=&#34;http://icms-conference.org/2020/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;ICMS 2020&lt;/a&gt; Session: 
+&lt;a href=&#34;https://opendreamkit.org/meetings/2020-07-13-ICMS-Jupyter/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;The Jupyter Environment for Computational Mathematics&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;2019&#34;&gt;2019&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://www.mis.mpg.de/calendar/conferences/2019/bva2019.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Buildings, Varieties, and Applications&lt;/a&gt; November 11 - 13, 2019, MPI für Mathematik in den Naturwissenschaften Leipzig&lt;/li&gt;
+&lt;li&gt;September 2019, &lt;em&gt;$\operatorname{Aut}(F_n)$ has property (T)&lt;/em&gt;, &lt;strong&gt;Outer Space in Bielefeld&lt;/strong&gt;, Bielefeld, Germany (plenary talk)&lt;/li&gt;
+&lt;li&gt;June 2019, &lt;em&gt;$\operatorname{Aut}(F_n)$ has property (T)&lt;/em&gt;, &lt;strong&gt;Rigidity&lt;/strong&gt; conference, Warsaw, Poland (plenary talk)&lt;/li&gt;
+&lt;li&gt;February 2019, &lt;em&gt;Computational aspects of property (T)&lt;/em&gt;, seminar talk, &lt;strong&gt;RWTH&lt;/strong&gt;, Aachen, Germany&lt;/li&gt;
+&lt;li&gt;January 2019, &lt;em&gt;Non-commutative positivity and Kazhdan&amp;rsquo;s property (T)&lt;/em&gt;, seminar talk, &lt;strong&gt;University of Innsbruck&lt;/strong&gt;, Innsbruck, Austria&lt;/li&gt;
+&lt;li&gt;January 2019, &lt;em&gt;Non-commutative positivity and Kazhdan&amp;rsquo;s property (T)&lt;/em&gt;, seminar talk, &lt;strong&gt;Tokyo University of Science&lt;/strong&gt;, Tokyo, Japan&lt;/li&gt;
+&lt;li&gt;January 2019, &lt;em&gt;On property (T) for $\operatorname{Aut}(F_n)$ and $\operatorname{SL}_n(\mathbb{Z})$&lt;/em&gt;, seminar talk, &lt;strong&gt;University of Tokyo&lt;/strong&gt;, Tokyo, Japan&lt;/li&gt;
+&lt;li&gt;January 2019, &lt;em&gt;On property (T) for $\operatorname{Aut}(F_n)$ and $\operatorname{SL}_n(\mathbb{Z})$&lt;/em&gt;, seminar talk, &lt;strong&gt;University of Kagoshima&lt;/strong&gt;, Kagoshima, Japan&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;2018&#34;&gt;2018&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;December 2018, &lt;em&gt;$\operatorname{Aut}(F_5)$ has property (T)&lt;/em&gt; at &lt;strong&gt;The 45th Symposium on Transformation Groups&lt;/strong&gt;, Kumamoto, Japan&lt;/li&gt;
+&lt;li&gt;December 2018, &lt;em&gt;On property (T) for $\operatorname{Aut}(F_n)$ and $\operatorname{SL}_n(\mathbb{Z})$&lt;/em&gt;, seminar talk, &lt;strong&gt;RIMS&lt;/strong&gt;, Kyoto, Japan&lt;/li&gt;
+&lt;li&gt;September 2018, &lt;em&gt;Computational aspects of property (T)&lt;/em&gt; at &lt;strong&gt;Joint meeting of the Italian Mathematical Union, the Italian Society of Industrial and Applied Mathematics and the Polish Mathematical Society&lt;/strong&gt;, Wrocław, Poland&lt;/li&gt;
+&lt;li&gt;July 2018, &lt;em&gt;Non-commutative positivity and property (T)&lt;/em&gt;, seminar talk, &lt;strong&gt;TU Berlin&lt;/strong&gt;, Berlin, Germany&lt;/li&gt;
+&lt;li&gt;June 2018, &lt;em&gt;Computational aspect of property (T)&lt;/em&gt;, at &lt;strong&gt;International Conference on Manifolds, Groups and Homotopy&lt;/strong&gt;, Isle of Skye, Scotland&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;2017&#34;&gt;2017&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;June 2017, &lt;em&gt;Certifying numerical estimates of spectral gaps&lt;/em&gt;, at &lt;strong&gt;Applied Topology&lt;/strong&gt;, Będlewo, Poland&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;2016&#34;&gt;2016&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;August 2016, &lt;em&gt;Introduction to property (T)&lt;/em&gt;, short course at &lt;strong&gt;Glances@Manifolds II&lt;/strong&gt;, Kraków, Poland&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

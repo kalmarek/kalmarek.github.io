@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>1 | Marek Kaluba Academic Page</title>
+    <link>https://www.math.kit.edu/user/kaluba/publication_types/1/</link>
+      <atom:link href="https://www.math.kit.edu/user/kaluba/publication_types/1/index.xml" rel="self" type="application/rss+xml" />
+    <description>1</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2024 Marek Kaluba</copyright><lastBuildDate>Mon, 23 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://www.math.kit.edu/user/kaluba/img/m.png</url>
+      <title>1</title>
+      <link>https://www.math.kit.edu/user/kaluba/publication_types/1/</link>
+    </image>
+    
+    <item>
+      <title>Polymake.jl: A new interface to polymake</title>
+      <link>https://www.math.kit.edu/user/kaluba/publication/2020-polymake_jl/</link>
+      <pubDate>Mon, 23 Mar 2020 00:00:00 +0000</pubDate>
+      <guid>https://www.math.kit.edu/user/kaluba/publication/2020-polymake_jl/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Group actions on complex projective spaces</title>
+      <link>https://www.math.kit.edu/user/kaluba/publication/2014-rims-kyoto/</link>
+      <pubDate>Sat, 29 Nov 2014 00:00:00 +0000</pubDate>
+      <guid>https://www.math.kit.edu/user/kaluba/publication/2014-rims-kyoto/</guid>
+      <description>&lt;p&gt;Let $G$ be a compact Lie group. For specific manifolds $M$, such as Euclidean spaces, disks, spheres, and complex projective spaces consider the following realisation problem.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Which manifolds $F$ are diffeomorphic to the corresponding fixed points sets $M^G$ for some action of $G$ on $M$?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Our goal is to discuss results related to the first question obtained so far for actions on Euclidean spaces, disks, and spheres, and then to describe new results for actions on complex projective spaces obtained by the first author in his PhD Thesis. Hence, every manifold $F$ which occurs as the fixed point set is a second-countable space, i.e., $F$ is paracompact and $F$ has countably many connected components, possibly not of the same dimension.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

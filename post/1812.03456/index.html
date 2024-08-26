@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Marek Kaluba">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Below are replication details for computations with special linear groups as described in Section 5.1 of paper On property (T) for $\operatorname{Aut}(F_n)$ and $\operatorname{SL}_n$. The content of the accompanying jupyter notebook is reproduced below.
+For exact details of computations for $36(\operatorname{Adj}_5 &#43; 2 \operatorname{Op}_5) - 50\Delta_5 \in I\operatorname{SAut}(F_5)$ see the document deposited with the dataset in zenodo data repository.
+  Table of Contents  Generating set Group Ring and Laplacians Orbit Decomposition Elements Adj and Op Optimization Problem  Solving the problem   Checking the solution  Checking in interval arithmetic     Installation The following instructions were prepared using julia-1.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://www.math.kit.edu/user/kaluba/post/1812.03456/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#3f51b5">
+  
+
+  
+  
+  
+  <script src="/user/kaluba/js/mathjax-config.js"></script>
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/user/kaluba/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/user/kaluba/index.webmanifest">
+  <link rel="icon" type="image/png" href="/user/kaluba/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/user/kaluba/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="https://www.math.kit.edu/user/kaluba/post/1812.03456/">
+
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@GimmeDaNumba">
+  <meta property="twitter:creator" content="@GimmeDaNumba">
+  
+  <meta property="og:site_name" content="Marek Kaluba Academic Page">
+  <meta property="og:url" content="https://www.math.kit.edu/user/kaluba/post/1812.03456/">
+  <meta property="og:title" content="Replication Details for 1812.03456 | Marek Kaluba Academic Page">
+  <meta property="og:description" content="Below are replication details for computations with special linear groups as described in Section 5.1 of paper On property (T) for $\operatorname{Aut}(F_n)$ and $\operatorname{SL}_n$. The content of the accompanying jupyter notebook is reproduced below.
+For exact details of computations for $36(\operatorname{Adj}_5 &#43; 2 \operatorname{Op}_5) - 50\Delta_5 \in I\operatorname{SAut}(F_5)$ see the document deposited with the dataset in zenodo data repository.
+  Table of Contents  Generating set Group Ring and Laplacians Orbit Decomposition Elements Adj and Op Optimization Problem  Solving the problem   Checking the solution  Checking in interval arithmetic     Installation The following instructions were prepared using julia-1."><meta property="og:image" content="https://www.math.kit.edu/user/kaluba/img/m.png">
+  <meta property="twitter:image" content="https://www.math.kit.edu/user/kaluba/img/m.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2019-01-17T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2019-01-17T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.math.kit.edu/user/kaluba/post/1812.03456/"
+  },
+  "headline": "Replication Details for 1812.03456",
+  
+  "datePublished": "2019-01-17T00:00:00Z",
+  "dateModified": "2019-01-17T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Marek Kaluba"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Marek Kaluba Academic Page",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.math.kit.edu/user/kaluba/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Below are replication details for computations with special linear groups as described in Section 5.1 of paper On property (T) for $\\operatorname{Aut}(F_n)$ and $\\operatorname{SL}_n$. The content of the accompanying jupyter notebook is reproduced below.\nFor exact details of computations for $36(\\operatorname{Adj}_5 + 2 \\operatorname{Op}_5) - 50\\Delta_5 \\in I\\operatorname{SAut}(F_5)$ see the document deposited with the dataset in zenodo data repository.\n  Table of Contents  Generating set Group Ring and Laplacians Orbit Decomposition Elements Adj and Op Optimization Problem  Solving the problem   Checking the solution  Checking in interval arithmetic     Installation The following instructions were prepared using julia-1."
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Replication Details for 1812.03456 | Marek Kaluba Academic Page</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/user/kaluba/">Marek Kaluba Academic Page</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/user/kaluba/">Marek Kaluba Academic Page</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/user/kaluba/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/user/kaluba/#featured"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/user/kaluba/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/user/kaluba/teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/user/kaluba/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      <li class="nav-item">
+        <a class="nav-link js-dark-toggle" href="#"><i class="fas fa-moon" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Replication Details for 1812.03456</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Jan 17, 2019
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    18 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      <div class="alert alert-note">
+  <div>
+    <p>Below are replication details for computations with special linear groups as described in Section 5.1 of paper <a href="https://www.math.kit.edu/user/kaluba/publication/2017-autf5-has-t/">On property (T) for $\operatorname{Aut}(F_n)$ and $\operatorname{SL}_n$</a>.
+The content of the accompanying <a href="https://nbviewer.jupyter.org/gist/kalmarek/03510181bc1e7c98615e86e1ec580b2a">jupyter notebook</a> is reproduced below.</p>
+<p>For exact details of computations for $36(\operatorname{Adj}_5 + 2 \operatorname{Op}_5) - 50\Delta_5 \in I\operatorname{SAut}(F_5)$ see the document deposited with the <a href="https://zenodo.org/record/1958996">dataset in zenodo data repository</a>.</p>
+  </div>
+</div>
+<h2>Table of Contents</h2>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#generating-set">Generating set</a></li>
+    <li><a href="#group-ring-and-laplacians">Group Ring and Laplacians</a></li>
+    <li><a href="#orbit-decomposition">Orbit Decomposition</a></li>
+    <li><a href="#elements-adj-and-op">Elements Adj and Op</a></li>
+    <li><a href="#optimization-problem">Optimization Problem</a>
+      <ul>
+        <li><a href="#solving-the-problem">Solving the problem</a></li>
+      </ul>
+    </li>
+    <li><a href="#checking-the-solution">Checking the solution</a>
+      <ul>
+        <li><a href="#checking-in-interval-arithmetic">Checking in interval arithmetic</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+<h1 id="installation">Installation</h1>
+<p>The following instructions were prepared using <code>julia-1.1.1</code>.</p>
+<hr>
+<p>Before exploring the notebook you need to clone the main repository:</p>
+<pre><code class="language-bash"> git clone https://github.com/kalmarek/1812.03456.git
+</code></pre>
+<p>This notebook should be located in <code>1812.03456/notebooks</code> directory.</p>
+<p>In the main directory (<code>1812.03456</code>) you should run the following code in <code>julia</code>s <code>REPL</code> console to instantiate the environment for computations:</p>
+<pre><code class="language-julia">using Pkg
+Pkg.activate(&quot;.&quot;)
+Pkg.instantiate()
+</code></pre>
+<p>(this needs to be done once per installation).</p>
+<p>Instantiation should install (among others): the 
+<a href="https://github.com/cvxgrp/scs" target="_blank" rel="noopener"><code>SCS</code> solver</a>, 
+<a href="https://github.com/JuliaOpt/JuMP.jl" target="_blank" rel="noopener"><code>JuMP</code> package</a> for mathematical programming and <code>IntervalArithmetic.jl</code> package from 
+<a href="https://github.com/JuliaIntervals/ValidatedNumerics.jl" target="_blank" rel="noopener"><code>ValidatedNumerics.jl</code></a>.</p>
+<p>The environment uses 
+<a href="https://github.com/kalmarek/Groups.jl" target="_blank" rel="noopener"><code>Groups.jl</code></a>, 
+<a href="https://github.com/kalmarek/GroupRings.jl" target="_blank" rel="noopener"><code>GroupRings.jl</code></a> (which are built on the framework of  
+<a href="https://github.com/Nemocas/AbstractAlgebra.jl" target="_blank" rel="noopener"><code>AbstractAlgebra.jl</code></a>) and 
+<a href="https://github.com/kalmarek/PropertyT.jl" target="_blank" rel="noopener"><code>PropertyT.jl</code></a> packages.</p>
+<h1 id="the-computation">The computation</h1>
+<p>The following programme certifies that
+$$\operatorname{Adj}_4 + \operatorname{Op}_4 - 0.82\Delta_4 =\Sigma_i \xi_i^*\xi_i \in \Sigma^2_2\mathbb{R}\operatorname{SL}(4,\mathbb{Z}).$$</p>
+<p>With small changes (which we will indicate) it also certifies that
+$$\operatorname{Adj}_3 - 0.157999\Delta_3 \in \Sigma^2_2\mathbb{R}\operatorname{SL}(3,\mathbb{Z})$$
+and that
+$$\operatorname{Adj}_5 +1.5 \mathrm{Op}_5 - 1.5\Delta_5 \in \Sigma^2_2\mathbb{R}\operatorname{SL}(5,\mathbb{Z}).$$</p>
+<pre><code class="language-julia">using Pkg
+Pkg.activate(&quot;..&quot;)
+using Dates
+now()
+</code></pre>
+<pre><code>2019-07-05T22:42:41.473
+</code></pre>
+<pre><code class="language-julia">using LinearAlgebra
+using AbstractAlgebra
+using Groups
+using GroupRings
+using PropertyT
+</code></pre>
+<p>So far we only made the needed packages available in the notebook.
+In the next cell we define <code>G</code> to be the set of all $4\times 4$ matrices over $\mathbb Z$.
+(For the second computation, set <code>N=3</code> below; for the third, set <code>N=5</code>)</p>
+<pre><code class="language-julia">N = 4
+G = MatrixAlgebra(zz, N)
+</code></pre>
+<pre><code>Matrix Algebra of degree 4 over Integers
+</code></pre>
+<h2 id="generating-set">Generating set</h2>
+<p>Now we create the elementary matrices $E_{i,j}$. The set of all such matrices and their inverses is denoted by <code>S</code>.</p>
+<pre><code class="language-julia">S = PropertyT.generating_set(G)
+</code></pre>
+<pre><code>24-element Array{AbstractAlgebra.Generic.MatAlgElem{Int64},1}:
+ [1 1 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] 
+ [1 0 1 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] 
+ [1 0 0 1]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] 
+ [1 0 0 0]
+[1 1 0 0]
+[0 0 1 0]
+[0 0 0 1] 
+ [1 0 0 0]
+[0 1 1 0]
+[0 0 1 0]
+[0 0 0 1] 
+ [1 0 0 0]
+[0 1 0 1]
+[0 0 1 0]
+[0 0 0 1] 
+ [1 0 0 0]
+[0 1 0 0]
+[1 0 1 0]
+[0 0 0 1] 
+ [1 0 0 0]
+[0 1 0 0]
+[0 1 1 0]
+[0 0 0 1] 
+ [1 0 0 0]
+[0 1 0 0]
+[0 0 1 1]
+[0 0 0 1] 
+ [1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[1 0 0 1] 
+ [1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 1 0 1] 
+ [1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 1 1] 
+ [1 -1 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1]
+ [1 0 -1 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1]
+ [1 0 0 -1]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1]
+ [1 0 0 0]
+[-1 1 0 0]
+[0 0 1 0]
+[0 0 0 1]
+ [1 0 0 0]
+[0 1 -1 0]
+[0 0 1 0]
+[0 0 0 1]
+ [1 0 0 0]
+[0 1 0 -1]
+[0 0 1 0]
+[0 0 0 1]
+ [1 0 0 0]
+[0 1 0 0]
+[-1 0 1 0]
+[0 0 0 1]
+ [1 0 0 0]
+[0 1 0 0]
+[0 -1 1 0]
+[0 0 0 1]
+ [1 0 0 0]
+[0 1 0 0]
+[0 0 1 -1]
+[0 0 0 1]
+ [1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[-1 0 0 1]
+ [1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 -1 0 1]
+ [1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 -1 1]
+</code></pre>
+<h2 id="group-ring-and-laplacians">Group Ring and Laplacians</h2>
+<p>Now we will generate the ball <code>E_R</code> of radius $R=4$ in $\operatorname{SL}(N,\mathbb{Z})$ and use this as a (partial) basis in a group ring (denoted by <code>RG</code> below). Such group ring also needs a multiplication table (<code>pm</code>, which is actually a <em>division table</em>) which is created as follows: when $x,y$ reside at positions <code>i</code>-th and <code>j</code>-th in <code>E_R</code>, then <code>pm[i,j] = k</code>, where <code>k</code> is the position of $x^{-1}y$ in <code>E_R</code>.</p>
+<pre><code class="language-julia">halfradius = 2
+E_R, sizes = Groups.generate_balls(S, radius=2*halfradius);
+E_rdict = GroupRings.reverse_dict(E_R)
+pm = GroupRings.create_pm(E_R, E_rdict, sizes[halfradius]; twisted=true);
+RG = GroupRing(G, E_R, E_rdict, pm)
+@show sizes;
+Δ = length(S)*one(RG) - sum(RG(s) for s in S)
+</code></pre>
+<pre><code>sizes = [25, 433, 6149, 75197]
+
+
+
+
+
+24[1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 1 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 1 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 1]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[1 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 1 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 1]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[1 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 1 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 0 1 1]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[1 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 1 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 1 1] - 1[1 -1 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 -1 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 -1]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[-1 1 0 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 -1 0]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 -1]
+[0 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[-1 0 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 -1 1 0]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 0 1 -1]
+[0 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[-1 0 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 -1 0 1] - 1[1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 -1 1]
+</code></pre>
+<h2 id="orbit-decomposition">Orbit Decomposition</h2>
+<p>Now something happens: in the next cell we split the subspace of $\mathbb{R} \operatorname{SL}(N, \mathbb{Z})$ supported on <code>E_R</code> into irreducible representations of the wreath product $\mathbb Z / 2 \mathbb Z \wr \operatorname{Sym}_N$. The action of wreath product on the elements of the matrix space is by conjugation, i.e. permutation of rows and columns.
+We also compute projections on the invariant subspaces to later speed up the optimisation step.</p>
+<pre><code class="language-julia">od = PropertyT.OrbitData(RG, WreathProduct(PermGroup(2), PermGroup(N)))
+orbit_data = PropertyT.decimate(od);
+</code></pre>
+<pre><code>┌ Info: Decomposing basis of RG into orbits of
+│   autS = Wreath Product of Permutation group over 2 elements by Permutation group over 4 elements
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:15
+
+
+  0.381708 seconds (1.18 M allocations: 82.083 MiB, 6.45% gc time)
+
+
+┌ Info: The action has 558 orbits
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:18
+┌ Info: Finding projections in the Group Ring of
+│   autS = Wreath Product of Permutation group over 2 elements by Permutation group over 4 elements
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:20
+
+
+  6.154452 seconds (9.74 M allocations: 487.622 MiB, 4.69% gc time)
+
+
+┌ Info: Finding AutS-action matrix representation
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:23
+
+
+  0.294136 seconds (963.71 k allocations: 64.184 MiB, 6.98% gc time)
+  0.440521 seconds (717.96 k allocations: 49.094 MiB, 4.87% gc time)
+
+
+┌ Info: Computing the projection matrices Uπs
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:27
+
+
+  1.778654 seconds (1.75 M allocations: 841.323 MiB, 5.12% gc time)
+
+
+┌ Info: 
+│ multiplicities  =   3  13  19  12  10   0   0   0   9  11  13  15   0   0   0   1   1   1   2   1
+│     dimensions  =   1   3   3   2   1   4   8   4   6   6   6   6   4   8   4   1   3   3   2   1
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:37
+┌ Info: Sparsifying (433, 3)-matrix... 
+│  0.7013086989992302   → 0.18475750577367206 ), (240 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 13)-matrix... 
+│  0.5821637946349263   → 0.3084029134837449  ), (1736 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 19)-matrix... 
+│  0.6031360155585268   → 0.4934970220007293  ), (4060 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 12)-matrix... 
+│  0.6123941493456505   → 0.2817551963048499  ), (1464 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 10)-matrix... 
+│  0.48221709006928404  → 0.1                 ), (433 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 9)-matrix... 
+│  0.24044136515268155  → 0.03695150115473441 ), (144 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 11)-matrix... 
+│  0.19462523619567498  → 0.033592273777031285), (160 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 13)-matrix... 
+│  0.16237342334340024  → 0.02842423165748801 ), (160 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 15)-matrix... 
+│  0.16874518860662047  → 0.027097767513471902), (176 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 1)-matrix... 
+│  0.11085450346420324  → 0.11085450346420324 ), (48 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 1)-matrix... 
+│  0.07390300230946882  → 0.07390300230946882 ), (32 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 1)-matrix... 
+│  0.07390300230946882  → 0.07390300230946882 ), (32 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 2)-matrix... 
+│  0.11200923787528869  → 0.09237875288683603 ), (80 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+┌ Info: Sparsifying (433, 1)-matrix... 
+│  0.11085450346420324  → 0.11085450346420324 ), (48 non-zeros)
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/orbitdata.jl:114
+</code></pre>
+<h2 id="elements-adj-and-op">Elements Adj and Op</h2>
+<p>Now we  define the elements $\operatorname{Adj}_N$ and $\operatorname{Op}_N$. The functions <code>Sq</code>, <code>Adj</code>, <code>Op</code> returning the appropriate elements are defined in the <code>src/sqadjop.jl</code> source file.</p>
+<pre><code class="language-julia">@time AdjN = PropertyT.Adj(RG, N)
+@time OpN = PropertyT.Op(RG, N);
+</code></pre>
+<pre><code>  1.719218 seconds (2.70 M allocations: 134.807 MiB, 3.24% gc time)
+  0.284995 seconds (367.56 k allocations: 18.374 MiB, 2.55% gc time)
+</code></pre>
+<p>Finally we compute the element <code>elt</code> of our interest:</p>
+<ul>
+<li>if <code>N=3</code>: $\operatorname{elt} = \operatorname{Adj}_3$,</li>
+<li>if <code>N=4</code>: $\operatorname{elt} = \operatorname{Adj}_4 + \operatorname{Op}_4$,</li>
+<li>if <code>N=5</code>: $\operatorname{elt} = \operatorname{Adj}_5 + 1.5\operatorname{Op}_5$.</li>
+</ul>
+<pre><code class="language-julia">if N == 3
+    k = 0
+elseif N == 4
+    k = 1
+elseif N == 5
+    k = 1.5
+end
+elt = AdjN + k*OpN;
+elt.coeffs
+</code></pre>
+<pre><code>    75197-element SparseArrays.SparseVector{Int64,Int64} with 361 stored entries:
+      [1    ]  =  480
+      [2    ]  =  -40
+      [3    ]  =  -40
+      [4    ]  =  -40
+      [5    ]  =  -40
+      [6    ]  =  -40
+      [7    ]  =  -40
+      [8    ]  =  -40
+      [9    ]  =  -40
+      [10   ]  =  -40
+               ⋮
+      [418  ]  =  1
+      [420  ]  =  1
+      [422  ]  =  2
+      [423  ]  =  1
+      [424  ]  =  1
+      [425  ]  =  1
+      [426  ]  =  1
+      [428  ]  =  1
+      [429  ]  =  1
+      [430  ]  =  1
+      [431  ]  =  1
+</code></pre>
+<h2 id="optimization-problem">Optimization Problem</h2>
+<p>We are ready to define the optimisation problem. Function</p>
+<blockquote>
+<p><code>PropertyT.SOS_problem(x, Δ, orbit_data; upper_bound=UB)</code></p>
+</blockquote>
+<p>defines the optimisation problem equivalent to the one of the form
+$$\begin{aligned}
+\text{ maximize : } \quad &amp; \lambda\
+\text{under constraints : }\quad &amp; 0 \leqslant \lambda \leqslant \operatorname{UB},\
+&amp; x - \lambda \Delta = \sum \xi_i^* \xi_i,\
+\end{aligned}$$</p>
+<pre><code class="language-julia"># @time SDP_problem, varλ, varP = PropertyT.SOS_problem(elt, Δ, orbit_data)
+if N == 3
+    UB = 0.158
+elseif N == 4
+    UB = 0.82005
+elseif N == 5
+    UB = 1.5005
+end
+SDP_problem, varP = PropertyT.SOS_problem(elt, Δ, orbit_data; upper_bound=UB)
+</code></pre>
+<pre><code>┌ Info: Adding 558 constraints...
+└ @ PropertyT /home/kalmar/.julia/packages/PropertyT/yHEMH/src/sos_sdps.jl:92
+
+
+  1.916622 seconds (3.18 M allocations: 408.777 MiB, 12.54% gc time)
+
+
+
+
+
+(A JuMP Model
+Maximization problem with:
+Variables: 1388
+Objective function type: JuMP.VariableRef
+`JuMP.VariableRef`-in-`MathOptInterface.LessThan{Float64}`: 1 constraint
+`JuMP.GenericAffExpr{Float64,JuMP.VariableRef}`-in-`MathOptInterface.EqualTo{Float64}`: 558 constraints
+`Array{JuMP.VariableRef,1}`-in-`MathOptInterface.PositiveSemidefiniteConeSquare`: 14 constraints
+Model mode: AUTOMATIC
+CachingOptimizer state: NO_OPTIMIZER
+Solver name: No optimizer attached.
+Names registered in the model: λ, Array{JuMP.VariableRef,2}[[noname noname noname; noname noname noname; noname noname noname], [noname noname … noname noname; noname noname … noname noname; … ; noname noname … noname noname; noname noname … noname noname], [noname noname … noname noname; noname noname … noname noname; … ; noname noname … noname noname; noname noname … noname noname], [noname noname … noname noname; noname noname … noname noname; … ; noname noname … noname noname; noname noname … noname noname], [noname noname … noname noname; noname noname … noname noname; … ; noname noname … noname noname; noname noname … noname noname], [noname noname … noname noname; noname noname … noname noname; … ; noname noname … noname noname; noname noname … noname noname], [noname noname … noname noname; noname noname … noname noname; … ; noname noname … noname noname; noname noname … noname noname], [noname noname … noname noname; noname noname … noname noname; … ; noname noname … noname noname; noname noname … noname noname], [noname noname … noname noname; noname noname … noname noname; … ; noname noname … noname noname; noname noname … noname noname], [noname], [noname], [noname], [noname noname; noname noname], [noname]])
+</code></pre>
+<pre><code class="language-julia">using JuMP
+using SCS
+λ = Ps = warm = nothing
+</code></pre>
+<h3 id="solving-the-problem">Solving the problem</h3>
+<p>Depending on the actual problem one may need to tweak the parameters given to the solver:</p>
+<ul>
+<li><code>eps</code> sets the requested accuracy</li>
+<li><code>max_iters</code> sets the number of iterations to run before solver gives up</li>
+<li><code>alpha</code> is a parameter ($\alpha \in (0,2)$) which determines the rate of convergence at the cost of the accuracy</li>
+<li><code>acceleration_lookback</code>: if you experience numerical instability in scs log should be changed to <code>1</code> (at the cost of rate of convergence).</li>
+</ul>
+<p>The parameters below should be enough to obtain a decent solution for $\operatorname{SL}(4, \mathbb{Z}), \operatorname{SL}(5, \mathbb{Z})$.<br>
+For $\operatorname{SL}(3, \mathbb{Z})$ approximately <code>1_000_000</code> of iterations is required; in this case by changing <code>UB</code> to $0.15$ (above) a much faster convergence can be observed.</p>
+<pre><code class="language-julia">with_SCS = with_optimizer(SCS.Optimizer, 
+    linear_solver=SCS.Direct, 
+    eps=3e-13,
+    max_iters=10000,
+    alpha=1.5,
+    acceleration_lookback=10,
+    warm_start=true)
+
+status, warm = PropertyT.solve(SDP_problem, with_SCS, warm);
+</code></pre>
+<pre><code>----------------------------------------------------------------------------
+	SCS v2.0.2 - Splitting Conic Solver
+	(c) Brendan O'Donoghue, Stanford University, 2012-2017
+----------------------------------------------------------------------------
+Lin-sys: sparse-direct, nnz in A = 130382
+eps = 3.00e-13, alpha = 1.50, max_iters = 10000, normalize = 1, scale = 1.00
+acceleration_lookback = 10, rho_x = 1.00e-03
+Variables n = 1388, constraints m = 1946
+Cones:	primal zero / dual free vars: 1196
+	linear vars: 1
+	sd vars: 749, sd blks: 14
+Setup time: 8.46e-02s
+SCS using variable warm-starting
+----------------------------------------------------------------------------
+ Iter | pri res | dua res | rel gap | pri obj | dua obj | kap/tau | time (s)
+----------------------------------------------------------------------------
+     0| 1.02e+00  1.23e+00  9.75e-01 -3.44e+01  4.76e+00  0.00e+00  2.96e-03 
+   100| 1.68e-04  1.10e-03  1.18e-03 -8.19e-01 -8.16e-01  2.95e-16  1.65e-01 
+   200| 1.86e-04  4.32e-04  1.38e-04 -8.19e-01 -8.20e-01  5.89e-16  3.40e-01 
+   300| 6.04e-05  5.47e-04  1.30e-04 -8.19e-01 -8.19e-01  2.39e-17  5.22e-01 
+   400| 1.35e-04  4.46e-04  2.68e-04 -8.19e-01 -8.20e-01  2.06e-15  6.93e-01 
+   500| 1.35e-04  4.21e-04  3.66e-04 -8.19e-01 -8.20e-01  2.36e-15  8.59e-01 
+   600| 4.90e-05  2.34e-04  2.32e-04 -8.20e-01 -8.19e-01  3.42e-16  1.02e+00 
+   700| 2.12e-05  1.74e-04  1.49e-04 -8.20e-01 -8.19e-01  1.51e-15  1.19e+00 
+   800| 6.12e-05  2.23e-04  2.15e-04 -8.20e-01 -8.19e-01  4.95e-16  1.37e+00 
+   900| 3.99e-05  1.79e-04  3.29e-05 -8.20e-01 -8.20e-01  5.59e-16  1.54e+00 
+  1000| 1.30e-05  1.93e-04  1.04e-04 -8.20e-01 -8.20e-01  1.37e-15  1.72e+00 
+  1100| 2.31e-05  2.01e-04  9.26e-05 -8.20e-01 -8.19e-01  2.58e-16  1.89e+00 
+  1200| 2.15e-05  1.68e-04  2.12e-04 -8.20e-01 -8.19e-01  1.20e-15  2.07e+00 
+  1300| 2.32e-05  1.61e-04  1.64e-04 -8.20e-01 -8.19e-01  5.90e-17  2.24e+00 
+  1400| 1.19e-05  1.13e-04  1.75e-04 -8.20e-01 -8.19e-01  5.17e-16  2.42e+00 
+  1500| 8.01e-06  1.33e-04  8.49e-05 -8.20e-01 -8.20e-01  3.33e-16  2.59e+00 
+  1600| 3.49e-05  1.50e-04  1.04e-04 -8.20e-01 -8.19e-01  3.73e-16  2.76e+00 
+  1700| 2.28e-05  8.89e-05  5.56e-05 -8.20e-01 -8.20e-01  2.86e-16  2.92e+00 
+  1800| 1.54e-05  9.31e-05  1.06e-04 -8.20e-01 -8.20e-01  4.60e-16  3.09e+00 
+  1900| 9.36e-06  1.25e-04  4.95e-06 -8.20e-01 -8.20e-01  3.36e-15  3.26e+00 
+  2000| 3.71e-05  8.99e-05  2.00e-05 -8.20e-01 -8.20e-01  3.53e-16  3.46e+00 
+  2100| 7.38e-06  7.97e-05  5.16e-05 -8.20e-01 -8.20e-01  1.92e-15  3.64e+00 
+  2200| 1.08e-05  7.21e-05  3.00e-05 -8.20e-01 -8.20e-01  8.14e-16  3.81e+00 
+  2300| 6.20e-06  9.69e-05  5.00e-05 -8.20e-01 -8.20e-01  1.36e-15  3.98e+00 
+  2400| 8.47e-06  8.09e-05  6.05e-05 -8.20e-01 -8.20e-01  2.48e-15  4.15e+00 
+  2500| 2.39e-05  8.09e-05  3.22e-05 -8.20e-01 -8.20e-01  3.40e-15  4.33e+00 
+  2600| 1.56e-05  5.56e-05  1.86e-05 -8.20e-01 -8.20e-01  1.13e-16  4.50e+00 
+  2700| 6.45e-06  6.44e-05  7.46e-07 -8.20e-01 -8.20e-01  1.15e-16  4.67e+00 
+  2800| 2.76e-06  4.58e-05  5.44e-05 -8.20e-01 -8.20e-01  3.67e-15  4.84e+00 
+  2900| 3.68e-06  5.38e-05  3.21e-05 -8.20e-01 -8.20e-01  1.04e-15  5.02e+00 
+  3000| 6.13e-06  5.96e-05  5.55e-05 -8.20e-01 -8.20e-01  2.67e-16  5.19e+00 
+  3100| 1.15e-05  4.97e-05  2.32e-06 -8.20e-01 -8.20e-01  4.40e-16  5.37e+00 
+  3200| 1.28e-05  3.79e-05  4.61e-05 -8.20e-01 -8.20e-01  2.80e-15  5.54e+00 
+  3300| 1.01e-05  8.71e-05  3.11e-05 -8.20e-01 -8.20e-01  1.90e-15  5.73e+00 
+  3400| 5.20e-06  4.60e-05  1.14e-05 -8.20e-01 -8.20e-01  1.77e-16  5.90e+00 
+  3500| 2.60e-06  2.80e-05  1.28e-05 -8.20e-01 -8.20e-01  7.29e-16  6.06e+00 
+  3600| 6.14e-06  4.07e-05  1.17e-05 -8.20e-01 -8.20e-01  1.41e-15  6.23e+00 
+  3700| 2.59e-06  2.02e-05  7.04e-06 -8.20e-01 -8.20e-01  7.81e-16  6.40e+00 
+  3800| 5.14e-06  3.43e-05  2.91e-05 -8.20e-01 -8.20e-01  3.08e-16  6.59e+00 
+  3900| 1.77e-06  2.43e-05  3.56e-07 -8.20e-01 -8.20e-01  1.42e-15  6.75e+00 
+  4000| 6.59e-06  2.22e-05  1.03e-05 -8.20e-01 -8.20e-01  2.65e-16  6.92e+00 
+  4100| 2.81e-06  2.11e-05  1.35e-05 -8.20e-01 -8.20e-01  1.65e-15  7.09e+00 
+  4200| 1.90e-06  2.91e-05  2.26e-05 -8.20e-01 -8.20e-01  1.54e-15  7.26e+00 
+  4300| 4.63e-06  3.09e-05  1.42e-06 -8.20e-01 -8.20e-01  1.15e-15  7.43e+00 
+  4400| 2.02e-06  1.69e-05  7.11e-06 -8.20e-01 -8.20e-01  8.27e-16  7.61e+00 
+  4500| 9.67e-06  2.00e-05  5.91e-06 -8.20e-01 -8.20e-01  5.69e-16  7.77e+00 
+  4600| 8.40e-07  4.23e-06  3.47e-06 -8.20e-01 -8.20e-01  2.54e-15  7.93e+00 
+  4700| 1.33e-06  9.78e-06  4.42e-08 -8.20e-01 -8.20e-01  8.54e-16  8.09e+00 
+  4800| 8.40e-07  2.94e-06  4.89e-06 -8.20e-01 -8.20e-01  2.71e-15  8.25e+00 
+  4900| 5.06e-07  1.84e-06  1.09e-06 -8.20e-01 -8.20e-01  2.43e-15  8.40e+00 
+  5000| 1.26e-06  3.09e-06  4.54e-06 -8.20e-01 -8.20e-01  5.48e-17  8.55e+00 
+  5100| 1.15e-07  2.30e-07  2.20e-07 -8.20e-01 -8.20e-01  4.83e-15  8.71e+00 
+  5200| 2.57e-08  2.21e-07  2.86e-09 -8.20e-01 -8.20e-01  3.43e-15  8.85e+00 
+  5300| 1.07e-04  2.94e-04  2.86e-04 -8.20e-01 -8.21e-01  4.81e-12  9.00e+00 
+  5400| 8.39e-09  1.30e-07  8.58e-08 -8.20e-01 -8.20e-01  1.72e-15  9.14e+00 
+  5500| 1.12e-08  1.68e-07  9.26e-09 -8.20e-01 -8.20e-01  2.03e-15  9.30e+00 
+  5600| 2.88e-06  1.85e-05  1.04e-05 -8.20e-01 -8.20e-01  6.67e-15  9.45e+00 
+  5700| 2.10e-05  2.21e-04  7.80e-05 -8.20e-01 -8.20e-01  8.08e-15  9.65e+00 
+  5800| 4.36e-07  1.32e-06  8.45e-07 -8.20e-01 -8.20e-01  1.36e-15  9.80e+00 
+  5900| 3.68e-06  3.39e-05  1.88e-06 -8.20e-01 -8.20e-01  1.39e-15  9.95e+00 
+  6000| 2.28e-08  2.05e-07  9.89e-08 -8.20e-01 -8.20e-01  1.26e-15  1.01e+01 
+  6100| 4.73e-08  7.77e-08  3.29e-08 -8.20e-01 -8.20e-01  1.86e-15  1.03e+01 
+  6200| 5.33e-09  1.65e-08  1.07e-08 -8.20e-01 -8.20e-01  2.61e-16  1.04e+01 
+  6300| 5.08e-08  3.23e-07  2.44e-07 -8.20e-01 -8.20e-01  1.71e-14  1.05e+01 
+  6400| 5.01e-14  8.48e-13  4.12e-13 -8.20e-01 -8.20e-01  4.17e-16  1.07e+01 
+  6402| 4.42e-14  1.73e-13  6.97e-14 -8.20e-01 -8.20e-01  7.23e-16  1.07e+01 
+----------------------------------------------------------------------------
+Status: Solved
+Timing: Solve time: 1.07e+01s
+	Lin-sys: nnz in L factor: 288182, avg solve time: 1.00e-03s
+	Cones: avg projection time: 4.08e-04s
+	Acceleration: avg step time: 1.74e-04s
+----------------------------------------------------------------------------
+Error metrics:
+dist(s, K) = 8.4711e-10, dist(y, K*) = 2.4476e-09, s'y/|s||y| = -3.2607e-15
+primal res: |Ax + s - b|_2 / (1 + |b|_2) = 4.4176e-14
+dual res:   |A'y + c|_2 / (1 + |c|_2) = 1.7338e-13
+rel gap:    |c'x + b'y| / (1 + |c'x| + |b'y|) = 6.9723e-14
+----------------------------------------------------------------------------
+c'x = -0.8201, -b'y = -0.8201
+============================================================================
+</code></pre>
+<pre><code class="language-julia">λ = value(SDP_problem[:λ])
+Ps = [value.(P) for P in varP]
+@show(status, λ);
+</code></pre>
+<pre><code>status = OPTIMAL::TerminationStatusCode = 1
+λ = 0.8200500000003405
+</code></pre>
+<h2 id="checking-the-solution">Checking the solution</h2>
+<p>Now we reconstruct the solution to the original problem over $\mathbb{R} \operatorname{SL}(N,\mathbb{Z})$, which essentially boils down to averaging the obtained solution over the orbits of wreath product action:
+$$Q=\frac{1}{|\Sigma|}\sum_{\sigma\in\Sigma}\sum_{\pi\in \widehat{\Sigma}} \dim{\pi}\cdot\sigma\left(U_{\pi}^T \sqrt{P_{\pi}} U_{\pi}\right).$$</p>
+<pre><code class="language-julia">Qs = real.(sqrt.(Ps));
+Q = PropertyT.reconstruct(Qs, orbit_data);
+</code></pre>
+<p>As explained in the paper the columns of the square-root of the solution matrix provide the coefficients for $\xi_i$&rsquo;s in basis <code>E_R</code> of the group ring. Below we compute the residual
+$$ b = \left(x - \lambda\Delta\right) - \sum \xi_i^*\xi_i.$$
+As we do it in floating-point arithmetic,  the result can&rsquo;t be taken seriously.</p>
+<pre><code class="language-julia">function SOS_residual(x::GroupRingElem, Q::Matrix)
+    RG = parent(x)
+    @time sos = PropertyT.compute_SOS(RG, Q);
+    return x - sos
+end
+</code></pre>
+<pre><code>SOS_residual (generic function with 1 method)
+</code></pre>
+<pre><code class="language-julia">residual = SOS_residual(elt - λ*Δ, Q)
+@show norm(residual, 1);
+</code></pre>
+<pre><code>┌ Warning: Scalar and coeffs are in different rings! Promoting result to Float64
+└ @ GroupRings /home/kalmar/.julia/packages/GroupRings/UwACc/src/GroupRings.jl:303
+┌ Warning: Adding elements with different coefficient rings, Promoting result to Float64
+└ @ GroupRings /home/kalmar/.julia/packages/GroupRings/UwACc/src/GroupRings.jl:341
+
+
+  0.017873 seconds (977 allocations: 2.065 MiB)
+norm(residual, 1) = 8.53743030863061e-9
+</code></pre>
+<h3 id="checking-in-interval-arithmetic">Checking in interval arithmetic</h3>
+<pre><code class="language-julia">using IntervalArithmetic
+IntervalArithmetic.setrounding(Interval, :tight)
+IntervalArithmetic.setformat(sigfigs=12);
+</code></pre>
+<p>Here we resort to interval arithmetic to provide certified upper and lower bounds on the norm of the residual.</p>
+<ul>
+<li>We first change entries of <code>Q</code> to narrow intervals</li>
+<li>We project columns of <code>Q</code> so that $0$ is in the sum of coefficients of each column (i.e. $\xi_i \in I \operatorname{SL}(N,\mathbb{Z})$)</li>
+<li>We compute the sum of squares and the $\ell_1$-norm of the residual in the interval arithmetic.</li>
+</ul>
+<p>The returned <code>check_columns_augmentation</code> is a boolean flag to detect if the projection was successful, i.e. if we can guarantee that each column of <code>Q_aug</code> can be represented by an element from the augmentation ideal. (If it were not successful, one may project <code>Q = PropertyT.augIdproj(Q)</code> in the floating point arithmetic prior to the cell below).</p>
+<p>The resulting norm of the residual is <strong>guaranteed</strong> to be contained in the resulting interval. E.g. if each entry of <code>Q</code> were changed into an honest rational number and all the computations were carried out in rational arithmetic, the rational $\ell_1$-norm will be contained in the interval $\ell_1$-norm.</p>
+<pre><code class="language-julia">Q_aug, check_columns_augmentation = PropertyT.augIdproj(Interval, Q);
+@assert check_columns_augmentation
+elt_int = elt - @interval(λ)*Δ;
+residual_int = SOS_residual(elt_int, Q_aug)
+@show norm(residual_int, 1);
+</code></pre>
+<pre><code>┌ Warning: Scalar and coeffs are in different rings! Promoting result to Interval{Float64}
+└ @ GroupRings /home/kalmar/.julia/packages/GroupRings/UwACc/src/GroupRings.jl:303
+┌ Warning: Adding elements with different coefficient rings, Promoting result to Interval{Float64}
+└ @ GroupRings /home/kalmar/.julia/packages/GroupRings/UwACc/src/GroupRings.jl:341
+
+
+  3.296487 seconds (976 allocations: 4.070 MiB)
+norm(residual_int, 1) = [1.06387679475e-08, 1.09608901207e-08]
+</code></pre>
+<pre><code class="language-julia">certified_λ = @interval(λ) - 2^2*norm(residual_int,1)
+</code></pre>
+<pre><code>[0.820049956156, 0.820049957446]
+</code></pre>
+<p>So $\operatorname{elt} - \lambda_0 \Delta \in \Sigma^2 I\operatorname{SL}(N, \mathbb{Z})$, where as $\lambda_0$ we could take the left end of the above interval:</p>
+<pre><code class="language-julia">certified_λ.lo
+</code></pre>
+<pre><code>0.8200499561567799
+</code></pre>
+<pre><code class="language-julia">using Dates
+now()
+</code></pre>
+<pre><code>2019-07-05T22:44:09.949
+</code></pre>
+<pre><code class="language-julia">versioninfo()
+</code></pre>
+<pre><code>Julia Version 1.1.1
+Commit 55e36cc308 (2019-05-16 04:10 UTC)
+Platform Info:
+  OS: Linux (x86_64-pc-linux-gnu)
+  CPU: Intel(R) Core(TM) i5-6200U CPU @ 2.30GHz
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-6.0.1 (ORCJIT, skylake)
+Environment:
+  JULIA_NUM_THREADS = 2
+</code></pre>
+<pre><code class="language-julia">
+</code></pre>
+
+    </div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/user/kaluba/authors/admin/avatar_hu285e2fa4d2e21e4da229db3462cca622_172573_270x270_fill_lanczos_center_3.png" alt="Avatar">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://www.math.kit.edu/user/kaluba/">Marek Kaluba</a></h5>
+      <h6 class="card-subtitle">Mathematician</h6>
+      <p class="card-text">My research interests include computational algebra, geometric group theory (in particular: property (T)) and (previously) surgery aspects of manifolds.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:kalmar%e2%88%82amu.edu.pl" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://arxiv.org/find/math/1/au:&#43;Kaluba_M/0/1/0/all/0/1" target="_blank" rel="noopener">
+        <i class="ai ai-arxiv"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/kalmarek" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://pgp.mit.edu/pks/lookup?op=get&amp;search=0x8BF1A3855328FC15" target="_blank" rel="noopener">
+        <i class="fas fa-key"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://twitter.com/GimmeDaNumba" target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/user/kaluba/files/cv-english.pdf" >
+        <i class="ai ai-cv"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/julia.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/bash.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/user/kaluba/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/user/kaluba/js/academic.min.6f1005d1a84220e2f466ff3d8e712f31.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © 2024 Marek Kaluba &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

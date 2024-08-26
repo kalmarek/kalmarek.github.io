@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>2 | Marek Kaluba Academic Page</title>
+    <link>https://www.math.kit.edu/user/kaluba/publication_types/2/</link>
+      <atom:link href="https://www.math.kit.edu/user/kaluba/publication_types/2/index.xml" rel="self" type="application/rss+xml" />
+    <description>2</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2024 Marek Kaluba</copyright><lastBuildDate>Sat, 08 Dec 2018 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://www.math.kit.edu/user/kaluba/img/m.png</url>
+      <title>2</title>
+      <link>https://www.math.kit.edu/user/kaluba/publication_types/2/</link>
+    </image>
+    
+    <item>
+      <title>On property (T) for $\operatorname{Aut}(F_n)$ and $\operatorname{SL}_n(\mathbb{Z})$</title>
+      <link>https://www.math.kit.edu/user/kaluba/publication/2018-property-t-for-autfn/</link>
+      <pubDate>Sat, 08 Dec 2018 00:00:00 +0000</pubDate>
+      <guid>https://www.math.kit.edu/user/kaluba/publication/2018-property-t-for-autfn/</guid>
+      <description>&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    &lt;p&gt;Replication details for computations with special linear groups as described in Section 5.1 of the paper are reproduced in a
+&lt;a href=&#34;https://www.math.kit.edu/user/kaluba/post/1812.03456/&#34;&gt;separate document&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For exact details of computations e.g. for $\operatorname{Adj}_5 + 3 \operatorname{Op}_5) - 1.4\Delta_5 \in I\operatorname{SAut}(F_5)$ see the document deposited with the &lt;a href=&#34;https://zenodo.org/record/1958995&#34;&gt;dataset in zenodo data repository&lt;/a&gt;.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>$\operatorname{Aut}(\mathbb{F}_5)$ has property (T)</title>
+      <link>https://www.math.kit.edu/user/kaluba/publication/2017-autf5-has-t/</link>
+      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
+      <guid>https://www.math.kit.edu/user/kaluba/publication/2017-autf5-has-t/</guid>
+      <description>&lt;p&gt;The description of 
+&lt;a href=&#34;https://www.math.kit.edu/user/kaluba/post/1712.07176/&#34;&gt;replication details&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Certifying Numerical Estimates of Spectral Gaps</title>
+      <link>https://www.math.kit.edu/user/kaluba/publication/2017-certifying-spectral-gaps/</link>
+      <pubDate>Tue, 28 Mar 2017 00:00:00 +0000</pubDate>
+      <guid>https://www.math.kit.edu/user/kaluba/publication/2017-certifying-spectral-gaps/</guid>
+      <description>&lt;p&gt;The 
+&lt;a href=&#34;https://www.math.kit.edu/user/kaluba/post/1703.09680/&#34;&gt;description&lt;/a&gt; of replication details.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Constructions of exotic actions on product manifolds with an asymmetric factor</title>
+      <link>https://www.math.kit.edu/user/kaluba/publication/2016-exotic-actions/</link>
+      <pubDate>Tue, 15 Mar 2016 00:00:00 +0000</pubDate>
+      <guid>https://www.math.kit.edu/user/kaluba/publication/2016-exotic-actions/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Effective topological complexity of spaces with symmetries</title>
+      <link>https://www.math.kit.edu/user/kaluba/publication/2015-effective-tc/</link>
+      <pubDate>Thu, 29 Oct 2015 00:00:00 +0000</pubDate>
+      <guid>https://www.math.kit.edu/user/kaluba/publication/2015-effective-tc/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>On equivariant and invariant topological complexity of smooth $\mathbb{Z}/p$-spheres</title>
+      <link>https://www.math.kit.edu/user/kaluba/publication/2015-tc-of-zp-spheres/</link>
+      <pubDate>Fri, 30 Jan 2015 00:00:00 +0000</pubDate>
+      <guid>https://www.math.kit.edu/user/kaluba/publication/2015-tc-of-zp-spheres/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>On Representation of the Reeb Graph as a Sub Complex of Manifold</title>
+      <link>https://www.math.kit.edu/user/kaluba/publication/2014-reeb-graph/</link>
+      <pubDate>Mon, 19 May 2014 00:00:00 +0000</pubDate>
+      <guid>https://www.math.kit.edu/user/kaluba/publication/2014-reeb-graph/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Non Symplectic Actions on Complex Projective Spaces</title>
+      <link>https://www.math.kit.edu/user/kaluba/publication/2012-non-symplectic/</link>
+      <pubDate>Tue, 12 Jul 2011 00:00:00 +0000</pubDate>
+      <guid>https://www.math.kit.edu/user/kaluba/publication/2012-non-symplectic/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
