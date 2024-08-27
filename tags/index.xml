@@ -2,14 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags | Marek Kaluba Academic Page</title>
-    <link>https://www.math.kit.edu/user/kaluba/tags/</link>
-      <atom:link href="https://www.math.kit.edu/user/kaluba/tags/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://kalmarek.github.io/tags/</link>
+      <atom:link href="https://kalmarek.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     <description>Tags</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2024 Marek Kaluba</copyright>
     <image>
-      <url>https://www.math.kit.edu/user/kaluba/img/m.png</url>
+      <url>https://kalmarek.github.io/img/m.png</url>
       <title>Tags</title>
-      <link>https://www.math.kit.edu/user/kaluba/tags/</link>
+      <link>https://kalmarek.github.io/tags/</link>
     </image>
     
   </channel>

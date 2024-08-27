@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts | Marek Kaluba Academic Page</title>
-    <link>https://www.math.kit.edu/user/kaluba/post/</link>
-      <atom:link href="https://www.math.kit.edu/user/kaluba/post/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://kalmarek.github.io/post/</link>
+      <atom:link href="https://kalmarek.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     <description>Posts</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2024 Marek Kaluba</copyright><lastBuildDate>Sun, 07 Jul 2019 11:28:34 +0200</lastBuildDate>
     <image>
-      <url>https://www.math.kit.edu/user/kaluba/img/m.png</url>
+      <url>https://kalmarek.github.io/img/m.png</url>
       <title>Posts</title>
-      <link>https://www.math.kit.edu/user/kaluba/post/</link>
+      <link>https://kalmarek.github.io/post/</link>
     </image>
     
     <item>
       <title>SCS on gpu in julia</title>
-      <link>https://www.math.kit.edu/user/kaluba/post/scs-on-gpu-in-julia/</link>
+      <link>https://kalmarek.github.io/post/scs-on-gpu-in-julia/</link>
       <pubDate>Sun, 07 Jul 2019 11:28:34 +0200</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/post/scs-on-gpu-in-julia/</guid>
+      <guid>https://kalmarek.github.io/post/scs-on-gpu-in-julia/</guid>
       <description>&lt;p&gt;
 &lt;a href=&#34;https://github.com/cvxgrp/scs/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Splitting Conic Solver&lt;/a&gt; or &lt;code&gt;scs&lt;/code&gt; is
 a well established solver for conic optimization problems.
@@ -77,12 +77,12 @@ In addition we also run demos to make sure &lt;code&gt;scs&lt;/code&gt; produced
     
     <item>
       <title>Replication Details for 1812.03456</title>
-      <link>https://www.math.kit.edu/user/kaluba/post/1812.03456/</link>
+      <link>https://kalmarek.github.io/post/1812.03456/</link>
       <pubDate>Thu, 17 Jan 2019 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/post/1812.03456/</guid>
+      <guid>https://kalmarek.github.io/post/1812.03456/</guid>
       <description>&lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    &lt;p&gt;Below are replication details for computations with special linear groups as described in Section 5.1 of paper &lt;a href=&#34;https://www.math.kit.edu/user/kaluba/publication/2017-autf5-has-t/&#34;&gt;On property (T) for $\operatorname{Aut}(F_n)$ and $\operatorname{SL}_n$&lt;/a&gt;.
+    &lt;p&gt;Below are replication details for computations with special linear groups as described in Section 5.1 of paper &lt;a href=&#34;https://kalmarek.github.io/publication/2017-autf5-has-t/&#34;&gt;On property (T) for $\operatorname{Aut}(F_n)$ and $\operatorname{SL}_n$&lt;/a&gt;.
 The content of the accompanying &lt;a href=&#34;https://nbviewer.jupyter.org/gist/kalmarek/03510181bc1e7c98615e86e1ec580b2a&#34;&gt;jupyter notebook&lt;/a&gt; is reproduced below.&lt;/p&gt;
 &lt;p&gt;For exact details of computations for $36(\operatorname{Adj}_5 + 2 \operatorname{Op}_5) - 50\Delta_5 \in I\operatorname{SAut}(F_5)$ see the document deposited with the &lt;a href=&#34;https://zenodo.org/record/1958996&#34;&gt;dataset in zenodo data repository&lt;/a&gt;.&lt;/p&gt;
   &lt;/div&gt;
@@ -748,11 +748,11 @@ Environment:
     
     <item>
       <title>Replication Details for 1712.07167</title>
-      <link>https://www.math.kit.edu/user/kaluba/post/1712.07176/</link>
+      <link>https://kalmarek.github.io/post/1712.07176/</link>
       <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/post/1712.07176/</guid>
+      <guid>https://kalmarek.github.io/post/1712.07176/</guid>
       <description>&lt;p&gt;This post documents replication details for paper 
-&lt;a href=&#34;https://www.math.kit.edu/user/kaluba/publication/2017-autf5-has-t/&#34;&gt;&lt;em&gt;$\operatorname{Aut}(\mathbb{F}_5)$ has property (T)&lt;/em&gt;&lt;/a&gt; by M. Kaluba, P.W. Nowak and N. Ozawa.&lt;/p&gt;
+&lt;a href=&#34;https://kalmarek.github.io/publication/2017-autf5-has-t/&#34;&gt;&lt;em&gt;$\operatorname{Aut}(\mathbb{F}_5)$ has property (T)&lt;/em&gt;&lt;/a&gt; by M. Kaluba, P.W. Nowak and N. Ozawa.&lt;/p&gt;
 &lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
     The current version of replication details is located in Nextjournal &lt;a href=&#34;https://nextjournal.com/kalmar/property-t-in-julia&#34;&gt;docker container&lt;/a&gt;. The following notes are exported from there.
@@ -909,14 +909,14 @@ Pkg.build(&amp;quot;SCS&amp;quot;)
     
     <item>
       <title>Replication details for 1703.09680</title>
-      <link>https://www.math.kit.edu/user/kaluba/post/1703.09680/</link>
+      <link>https://kalmarek.github.io/post/1703.09680/</link>
       <pubDate>Tue, 28 Mar 2017 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/post/1703.09680/</guid>
+      <guid>https://kalmarek.github.io/post/1703.09680/</guid>
       <description>&lt;p&gt;This post documents replication details for paper 
-&lt;a href=&#34;https://www.math.kit.edu/user/kaluba/publication/2017-certifying-spectral-gaps/&#34;&gt;&lt;em&gt;Certifying numerical estimates of spectral gaps&lt;/em&gt;&lt;/a&gt; by M. Kaluba, P.W. Nowak.&lt;/p&gt;
+&lt;a href=&#34;https://kalmarek.github.io/publication/2017-certifying-spectral-gaps/&#34;&gt;&lt;em&gt;Certifying numerical estimates of spectral gaps&lt;/em&gt;&lt;/a&gt; by M. Kaluba, P.W. Nowak.&lt;/p&gt;
 &lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    This guide is rather outdated. All of the computations can be done (and much more effectively) by exploiting the symmetry of the Laplacian as is described in &lt;a href=&#34;https://www.math.kit.edu/user/kaluba/post/1712.07176/&#34;&gt;Replication Details for 1712.07167&lt;/a&gt;. For more details on the method see &lt;a href=&#34;https://www.math.kit.edu/user/kaluba/publication/2017-autf5-has-t/&#34;&gt;$\operatorname{Aut}(\mathbb{F}_5)$ has property (T)&lt;/a&gt;.
+    This guide is rather outdated. All of the computations can be done (and much more effectively) by exploiting the symmetry of the Laplacian as is described in &lt;a href=&#34;https://kalmarek.github.io/post/1712.07176/&#34;&gt;Replication Details for 1712.07167&lt;/a&gt;. For more details on the method see &lt;a href=&#34;https://kalmarek.github.io/publication/2017-autf5-has-t/&#34;&gt;$\operatorname{Aut}(\mathbb{F}_5)$ has property (T)&lt;/a&gt;.
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;h2&gt;Table of Contents&lt;/h2&gt;

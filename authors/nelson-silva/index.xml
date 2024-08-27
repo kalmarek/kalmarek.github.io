@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Nelson Silva | Marek Kaluba Academic Page</title>
-    <link>https://www.math.kit.edu/user/kaluba/authors/nelson-silva/</link>
-      <atom:link href="https://www.math.kit.edu/user/kaluba/authors/nelson-silva/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://kalmarek.github.io/authors/nelson-silva/</link>
+      <atom:link href="https://kalmarek.github.io/authors/nelson-silva/index.xml" rel="self" type="application/rss+xml" />
     <description>Nelson Silva</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2024 Marek Kaluba</copyright><lastBuildDate>Mon, 19 May 2014 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://www.math.kit.edu/user/kaluba/img/m.png</url>
+      <url>https://kalmarek.github.io/img/m.png</url>
       <title>Nelson Silva</title>
-      <link>https://www.math.kit.edu/user/kaluba/authors/nelson-silva/</link>
+      <link>https://kalmarek.github.io/authors/nelson-silva/</link>
     </image>
     
     <item>
       <title>On Representation of the Reeb Graph as a Sub Complex of Manifold</title>
-      <link>https://www.math.kit.edu/user/kaluba/publication/2014-reeb-graph/</link>
+      <link>https://kalmarek.github.io/publication/2014-reeb-graph/</link>
       <pubDate>Mon, 19 May 2014 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/publication/2014-reeb-graph/</guid>
+      <guid>https://kalmarek.github.io/publication/2014-reeb-graph/</guid>
       <description></description>
     </item>
     

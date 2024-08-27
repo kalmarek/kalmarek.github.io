@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Blanks | Marek Kaluba Academic Page</title>
-    <link>https://www.math.kit.edu/user/kaluba/blank/</link>
-      <atom:link href="https://www.math.kit.edu/user/kaluba/blank/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://kalmarek.github.io/blank/</link>
+      <atom:link href="https://kalmarek.github.io/blank/index.xml" rel="self" type="application/rss+xml" />
     <description>Blanks</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2024 Marek Kaluba</copyright><lastBuildDate>Fri, 17 May 2019 12:27:06 +0200</lastBuildDate>
     <image>
-      <url>https://www.math.kit.edu/user/kaluba/img/m.png</url>
+      <url>https://kalmarek.github.io/img/m.png</url>
       <title>Blanks</title>
-      <link>https://www.math.kit.edu/user/kaluba/blank/</link>
+      <link>https://kalmarek.github.io/blank/</link>
     </image>
     
     <item>
       <title>Past talks since 2016</title>
-      <link>https://www.math.kit.edu/user/kaluba/blank/past-talks/</link>
+      <link>https://kalmarek.github.io/blank/past-talks/</link>
       <pubDate>Fri, 17 May 2019 12:27:06 +0200</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/blank/past-talks/</guid>
+      <guid>https://kalmarek.github.io/blank/past-talks/</guid>
       <description>&lt;h1 id=&#34;2021&#34;&gt;2021&lt;/h1&gt;
 &lt;h1 id=&#34;2020&#34;&gt;2020&lt;/h1&gt;
 &lt;ul&gt;

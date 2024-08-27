@@ -2,14 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>CGT@KIT WS2022/2023 | Marek Kaluba Academic Page</title>
-    <link>https://www.math.kit.edu/user/kaluba/teaching/cgt/ws2022/</link>
-      <atom:link href="https://www.math.kit.edu/user/kaluba/teaching/cgt/ws2022/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://kalmarek.github.io/teaching/cgt/ws2022/</link>
+      <atom:link href="https://kalmarek.github.io/teaching/cgt/ws2022/index.xml" rel="self" type="application/rss+xml" />
     <description>CGT@KIT WS2022/2023</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2024 Marek Kaluba</copyright><lastBuildDate>Tue, 25 Oct 2022 18:25:21 +0200</lastBuildDate>
     <image>
-      <url>https://www.math.kit.edu/user/kaluba/img/m.png</url>
+      <url>https://kalmarek.github.io/img/m.png</url>
       <title>CGT@KIT WS2022/2023</title>
-      <link>https://www.math.kit.edu/user/kaluba/teaching/cgt/ws2022/</link>
+      <link>https://kalmarek.github.io/teaching/cgt/ws2022/</link>
     </image>
     
   </channel>

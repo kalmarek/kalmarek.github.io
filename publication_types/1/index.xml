@@ -2,29 +2,29 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>1 | Marek Kaluba Academic Page</title>
-    <link>https://www.math.kit.edu/user/kaluba/publication_types/1/</link>
-      <atom:link href="https://www.math.kit.edu/user/kaluba/publication_types/1/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://kalmarek.github.io/publication_types/1/</link>
+      <atom:link href="https://kalmarek.github.io/publication_types/1/index.xml" rel="self" type="application/rss+xml" />
     <description>1</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2024 Marek Kaluba</copyright><lastBuildDate>Mon, 23 Mar 2020 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://www.math.kit.edu/user/kaluba/img/m.png</url>
+      <url>https://kalmarek.github.io/img/m.png</url>
       <title>1</title>
-      <link>https://www.math.kit.edu/user/kaluba/publication_types/1/</link>
+      <link>https://kalmarek.github.io/publication_types/1/</link>
     </image>
     
     <item>
       <title>Polymake.jl: A new interface to polymake</title>
-      <link>https://www.math.kit.edu/user/kaluba/publication/2020-polymake_jl/</link>
+      <link>https://kalmarek.github.io/publication/2020-polymake_jl/</link>
       <pubDate>Mon, 23 Mar 2020 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/publication/2020-polymake_jl/</guid>
+      <guid>https://kalmarek.github.io/publication/2020-polymake_jl/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Group actions on complex projective spaces</title>
-      <link>https://www.math.kit.edu/user/kaluba/publication/2014-rims-kyoto/</link>
+      <link>https://kalmarek.github.io/publication/2014-rims-kyoto/</link>
       <pubDate>Sat, 29 Nov 2014 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/publication/2014-rims-kyoto/</guid>
+      <guid>https://kalmarek.github.io/publication/2014-rims-kyoto/</guid>
       <description>&lt;p&gt;Let $G$ be a compact Lie group. For specific manifolds $M$, such as Euclidean spaces, disks, spheres, and complex projective spaces consider the following realisation problem.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Which manifolds $F$ are diffeomorphic to the corresponding fixed points sets $M^G$ for some action of $G$ on $M$?&lt;/li&gt;

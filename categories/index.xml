@@ -2,14 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories | Marek Kaluba Academic Page</title>
-    <link>https://www.math.kit.edu/user/kaluba/categories/</link>
-      <atom:link href="https://www.math.kit.edu/user/kaluba/categories/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://kalmarek.github.io/categories/</link>
+      <atom:link href="https://kalmarek.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     <description>Categories</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2024 Marek Kaluba</copyright>
     <image>
-      <url>https://www.math.kit.edu/user/kaluba/img/m.png</url>
+      <url>https://kalmarek.github.io/img/m.png</url>
       <title>Categories</title>
-      <link>https://www.math.kit.edu/user/kaluba/categories/</link>
+      <link>https://kalmarek.github.io/categories/</link>
     </image>
     
   </channel>

@@ -2,49 +2,49 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Marek Kaluba Academic Page</title>
-    <link>https://www.math.kit.edu/user/kaluba/authors/admin/</link>
-      <atom:link href="https://www.math.kit.edu/user/kaluba/authors/admin/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://kalmarek.github.io/authors/admin/</link>
+      <atom:link href="https://kalmarek.github.io/authors/admin/index.xml" rel="self" type="application/rss+xml" />
     <description>Marek Kaluba Academic Page</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2024 Marek Kaluba</copyright><lastBuildDate>Wed, 18 Nov 2020 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://www.math.kit.edu/user/kaluba/img/m.png</url>
+      <url>https://kalmarek.github.io/img/m.png</url>
       <title>Marek Kaluba Academic Page</title>
-      <link>https://www.math.kit.edu/user/kaluba/authors/admin/</link>
+      <link>https://kalmarek.github.io/authors/admin/</link>
     </image>
     
     <item>
       <title>Hyperbolic generalized triangle groups, property (T) and finite simple quotients</title>
-      <link>https://www.math.kit.edu/user/kaluba/publication/2020-small-hyperbolic/</link>
+      <link>https://kalmarek.github.io/publication/2020-small-hyperbolic/</link>
       <pubDate>Wed, 18 Nov 2020 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/publication/2020-small-hyperbolic/</guid>
+      <guid>https://kalmarek.github.io/publication/2020-small-hyperbolic/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Geometric Disentanglement by Random Convex Polytopes</title>
-      <link>https://www.math.kit.edu/user/kaluba/publication/2020-random-polytopes/</link>
+      <link>https://kalmarek.github.io/publication/2020-random-polytopes/</link>
       <pubDate>Tue, 29 Sep 2020 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/publication/2020-random-polytopes/</guid>
+      <guid>https://kalmarek.github.io/publication/2020-random-polytopes/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Polymake.jl: A new interface to polymake</title>
-      <link>https://www.math.kit.edu/user/kaluba/publication/2020-polymake_jl/</link>
+      <link>https://kalmarek.github.io/publication/2020-polymake_jl/</link>
       <pubDate>Mon, 23 Mar 2020 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/publication/2020-polymake_jl/</guid>
+      <guid>https://kalmarek.github.io/publication/2020-polymake_jl/</guid>
       <description></description>
     </item>
     
     <item>
       <title>On property (T) for $\operatorname{Aut}(F_n)$ and $\operatorname{SL}_n(\mathbb{Z})$</title>
-      <link>https://www.math.kit.edu/user/kaluba/publication/2018-property-t-for-autfn/</link>
+      <link>https://kalmarek.github.io/publication/2018-property-t-for-autfn/</link>
       <pubDate>Sat, 08 Dec 2018 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/publication/2018-property-t-for-autfn/</guid>
+      <guid>https://kalmarek.github.io/publication/2018-property-t-for-autfn/</guid>
       <description>&lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
     &lt;p&gt;Replication details for computations with special linear groups as described in Section 5.1 of the paper are reproduced in a
-&lt;a href=&#34;https://www.math.kit.edu/user/kaluba/post/1812.03456/&#34;&gt;separate document&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&#34;https://kalmarek.github.io/post/1812.03456/&#34;&gt;separate document&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;For exact details of computations e.g. for $\operatorname{Adj}_5 + 3 \operatorname{Op}_5) - 1.4\Delta_5 \in I\operatorname{SAut}(F_5)$ see the document deposited with the &lt;a href=&#34;https://zenodo.org/record/1958995&#34;&gt;dataset in zenodo data repository&lt;/a&gt;.&lt;/p&gt;
   &lt;/div&gt;
 &lt;/div&gt;
@@ -53,53 +53,53 @@
     
     <item>
       <title>$\operatorname{Aut}(\mathbb{F}_5)$ has property (T)</title>
-      <link>https://www.math.kit.edu/user/kaluba/publication/2017-autf5-has-t/</link>
+      <link>https://kalmarek.github.io/publication/2017-autf5-has-t/</link>
       <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/publication/2017-autf5-has-t/</guid>
+      <guid>https://kalmarek.github.io/publication/2017-autf5-has-t/</guid>
       <description>&lt;p&gt;The description of 
-&lt;a href=&#34;https://www.math.kit.edu/user/kaluba/post/1712.07176/&#34;&gt;replication details&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&#34;https://kalmarek.github.io/post/1712.07176/&#34;&gt;replication details&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Certifying Numerical Estimates of Spectral Gaps</title>
-      <link>https://www.math.kit.edu/user/kaluba/publication/2017-certifying-spectral-gaps/</link>
+      <link>https://kalmarek.github.io/publication/2017-certifying-spectral-gaps/</link>
       <pubDate>Tue, 28 Mar 2017 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/publication/2017-certifying-spectral-gaps/</guid>
+      <guid>https://kalmarek.github.io/publication/2017-certifying-spectral-gaps/</guid>
       <description>&lt;p&gt;The 
-&lt;a href=&#34;https://www.math.kit.edu/user/kaluba/post/1703.09680/&#34;&gt;description&lt;/a&gt; of replication details.&lt;/p&gt;
+&lt;a href=&#34;https://kalmarek.github.io/post/1703.09680/&#34;&gt;description&lt;/a&gt; of replication details.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Constructions of exotic actions on product manifolds with an asymmetric factor</title>
-      <link>https://www.math.kit.edu/user/kaluba/publication/2016-exotic-actions/</link>
+      <link>https://kalmarek.github.io/publication/2016-exotic-actions/</link>
       <pubDate>Tue, 15 Mar 2016 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/publication/2016-exotic-actions/</guid>
+      <guid>https://kalmarek.github.io/publication/2016-exotic-actions/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Effective topological complexity of spaces with symmetries</title>
-      <link>https://www.math.kit.edu/user/kaluba/publication/2015-effective-tc/</link>
+      <link>https://kalmarek.github.io/publication/2015-effective-tc/</link>
       <pubDate>Thu, 29 Oct 2015 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/publication/2015-effective-tc/</guid>
+      <guid>https://kalmarek.github.io/publication/2015-effective-tc/</guid>
       <description></description>
     </item>
     
     <item>
       <title>On equivariant and invariant topological complexity of smooth $\mathbb{Z}/p$-spheres</title>
-      <link>https://www.math.kit.edu/user/kaluba/publication/2015-tc-of-zp-spheres/</link>
+      <link>https://kalmarek.github.io/publication/2015-tc-of-zp-spheres/</link>
       <pubDate>Fri, 30 Jan 2015 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/publication/2015-tc-of-zp-spheres/</guid>
+      <guid>https://kalmarek.github.io/publication/2015-tc-of-zp-spheres/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Group actions on complex projective spaces</title>
-      <link>https://www.math.kit.edu/user/kaluba/publication/2014-rims-kyoto/</link>
+      <link>https://kalmarek.github.io/publication/2014-rims-kyoto/</link>
       <pubDate>Sat, 29 Nov 2014 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/publication/2014-rims-kyoto/</guid>
+      <guid>https://kalmarek.github.io/publication/2014-rims-kyoto/</guid>
       <description>&lt;p&gt;Let $G$ be a compact Lie group. For specific manifolds $M$, such as Euclidean spaces, disks, spheres, and complex projective spaces consider the following realisation problem.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Which manifolds $F$ are diffeomorphic to the corresponding fixed points sets $M^G$ for some action of $G$ on $M$?&lt;/li&gt;
@@ -110,17 +110,17 @@
     
     <item>
       <title>On Representation of the Reeb Graph as a Sub Complex of Manifold</title>
-      <link>https://www.math.kit.edu/user/kaluba/publication/2014-reeb-graph/</link>
+      <link>https://kalmarek.github.io/publication/2014-reeb-graph/</link>
       <pubDate>Mon, 19 May 2014 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/publication/2014-reeb-graph/</guid>
+      <guid>https://kalmarek.github.io/publication/2014-reeb-graph/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Non Symplectic Actions on Complex Projective Spaces</title>
-      <link>https://www.math.kit.edu/user/kaluba/publication/2012-non-symplectic/</link>
+      <link>https://kalmarek.github.io/publication/2012-non-symplectic/</link>
       <pubDate>Tue, 12 Jul 2011 00:00:00 +0000</pubDate>
-      <guid>https://www.math.kit.edu/user/kaluba/publication/2012-non-symplectic/</guid>
+      <guid>https://kalmarek.github.io/publication/2012-non-symplectic/</guid>
       <description></description>
     </item>
     

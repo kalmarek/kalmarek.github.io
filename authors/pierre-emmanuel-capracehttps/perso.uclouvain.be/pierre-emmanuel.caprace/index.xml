@@ -2,14 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>[Pierre-Emmanuel Caprace](https://perso.uclouvain.be/pierre-emmanuel.caprace/) | Marek Kaluba Academic Page</title>
-    <link>https://www.math.kit.edu/user/kaluba/authors/pierre-emmanuel-capracehttps/perso.uclouvain.be/pierre-emmanuel.caprace/</link>
-      <atom:link href="https://www.math.kit.edu/user/kaluba/authors/pierre-emmanuel-capracehttps/perso.uclouvain.be/pierre-emmanuel.caprace/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://kalmarek.github.io/authors/pierre-emmanuel-capracehttps/perso.uclouvain.be/pierre-emmanuel.caprace/</link>
+      <atom:link href="https://kalmarek.github.io/authors/pierre-emmanuel-capracehttps/perso.uclouvain.be/pierre-emmanuel.caprace/index.xml" rel="self" type="application/rss+xml" />
     <description>[Pierre-Emmanuel Caprace](https://perso.uclouvain.be/pierre-emmanuel.caprace/)</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2024 Marek Kaluba</copyright>
     <image>
-      <url>https://www.math.kit.edu/user/kaluba/img/m.png</url>
+      <url>https://kalmarek.github.io/img/m.png</url>
       <title>[Pierre-Emmanuel Caprace](https://perso.uclouvain.be/pierre-emmanuel.caprace/)</title>
-      <link>https://www.math.kit.edu/user/kaluba/authors/pierre-emmanuel-capracehttps/perso.uclouvain.be/pierre-emmanuel.caprace/</link>
+      <link>https://kalmarek.github.io/authors/pierre-emmanuel-capracehttps/perso.uclouvain.be/pierre-emmanuel.caprace/</link>
     </image>
     
   </channel>
